@@ -1,0 +1,600 @@
+:root {
+    /* Color Palette - Updated to match new background image (Cooler/Neutral White) */
+    --bg-color: #fafbf8; /* Was #f4f3ea */
+    --ink-color: #202020; /* Slightly darker to contrast with brighter bg */
+    --ink-light: #505050; /* Neutral grey, removed warm tint */
+    --accent-red: #b22222; /* Chinese Red (Seal) - Kept */
+    --font-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", serif;
+    --font-sans: "Noto Sans SC", "Source Han Sans SC", sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-serif);
+    background-color: var(--bg-color);
+    /* Layered Background:
+       1. SVG Noise (Texture)
+       2. Cool Tone Overlay (Restored Coldness: ~50% opacity, Blue-ish)
+       3. Panorama Image (Full Scroll Parallax)
+    */
+    background-image: 
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E"),
+        linear-gradient(rgba(230, 240, 255, 0.6), rgba(230, 240, 255, 0.5)), /* Stronger Cold Tone */
+        url("../img/bg_panorama.jpg");
+    
+    background-repeat: repeat, no-repeat, no-repeat;
+    
+    /* 
+       Size Logic:
+       - Noise: auto
+       - Overlay: auto
+       - Panorama: auto 100vh 
+         (Height = 100% Viewport Height, Width auto-scales to maintain aspect ratio)
+         This ensures top/bottom are fully covered without whitespace.
+    */
+    background-size: auto, auto, auto 100vh;
+    
+    /* 
+       Position:
+       - Noise: top left
+       - Overlay: top left
+       - Panorama: 
+         X: calc(0% + var(--scroll-progress, 0) * 100%)
+         0% = Left edge of image aligns with Left edge of viewport.
+         100% = Right edge of image aligns with Right edge of viewport.
+         This creates a panning effect from Left to Right as you scroll down.
+    */
+    background-position: 
+        top left, 
+        top left, 
+        calc(var(--scroll-progress, 0) * 100%) center;
+    
+    background-attachment: fixed; /* Fixed relative to viewport */
+    transition: background-position 0.1s linear; /* Smooth movement */
+    
+    color: var(--ink-color);
+    line-height: 1.6;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Removed specific media queries for split images/panorama since we now use panorama globally */
+
+::selection {
+    background-color: var(--ink-light); /* Ink grey */
+    color: #fff;
+    text-shadow: none;
+}
+
+::-moz-selection {
+    background-color: var(--ink-light);
+    color: #fff;
+    text-shadow: none;
+}
+
+/* Mountain Background Silhouette (Removed) */
+
+/* Canvas Background */
+#ink-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Navigation */
+.ink-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 5%;
+    background: rgba(244, 244, 244, 0.9);
+    backdrop-filter: blur(5px);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+}
+
+/* Ink Brush Style Links/Buttons */
+.nav-links a, .ink-btn {
+    text-decoration: none;
+    color: var(--ink-color);
+    font-size: 1.1rem;
+    position: relative;
+    padding: 8px 25px;
+    border: 2px solid var(--ink-color);
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; /* Irregular border radius */
+    background: transparent;
+    transition: all 0.3s ease;
+    /* Apply the brush edge filter */
+    filter: url(#brush-edge);
+    /* Ensure text is sharp by isolating it? No, filter applies to whole element.
+       Workaround: wrapper or pseudo-element. 
+       Let's try direct application first, but it might distort text.
+       If text distorts, we move border to pseudo element.
+    */
+}
+
+/* Refined Approach: Use pseudo-element for the brush border to avoid text distortion */
+.nav-links a, .ink-btn {
+    border: none; /* Remove direct border */
+    filter: none; /* Remove filter from parent */
+    position: relative;
+    z-index: 1;
+    /* Initialize vars */
+    --x: 50%;
+    --y: 50%;
+}
+
+/* The Brush Border */
+.nav-links a::before, .ink-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 2px solid var(--ink-color);
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+    z-index: -1;
+    filter: url(#brush-edge);
+    transition: transform 0.3s ease, background-color 0.3s ease; /* No transition on background-image for instant tracking */
+    background: transparent;
+}
+
+.nav-links a::after, .ink-btn::after {
+    display: none; /* Remove old underline effect */
+}
+
+/* Hover Effect: Fill with ink */
+.nav-links a:hover, .ink-btn:hover {
+    color: #fff;
+}
+
+.nav-links a:hover::before, .ink-btn:hover::before {
+    /* Dynamic Ink Pooling: 
+       1. Base color is dark (overall button is blackish).
+       2. Gradient makes the mouse position pitch black.
+    */
+    background-color: rgba(30, 30, 30, 0.7); /* Dark Ink Base */
+    background-image: 
+        radial-gradient(circle 90px at var(--x) var(--y), rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 40%, transparent 100%);
+    
+    transform: scale(1.05); /* Slight expansion */
+    filter: url(#brush-edge) blur(0.5px); /* Slight blur for wet ink look */
+}
+
+/* Specific fix for contact buttons to look consistent */
+.ink-btn {
+    margin: 0 10px;
+    display: inline-block;
+}
+
+/* Works Card Spacer */
+.spacer {
+    height: 1.5rem;
+}
+
+/* Hero Section */
+.hero-section {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+}
+
+.ink-title {
+    font-size: 5rem;
+    margin-bottom: 1rem;
+    letter-spacing: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+.subtitle {
+    font-size: 1.5rem;
+    color: var(--ink-light);
+    font-style: italic;
+    margin-bottom: 2rem;
+}
+
+.scroll-indicator {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2rem;
+    animation: bounce 2s infinite;
+    cursor: pointer;
+}
+
+/* General Section Styles */
+.section-container {
+    min-height: 80vh;
+    padding: 6rem 10%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* General Card Style */
+.ink-card {
+    background: rgba(250, 249, 222, 0.85); /* Rice Paper Color with high opacity */
+    border-radius: 8px;
+    padding: 3rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    margin: 2rem auto;
+    max-width: 800px;
+    position: relative;
+    border: 1px solid rgba(0,0,0,0.03);
+    /* Subtle paper texture on card too */
+    backdrop-filter: blur(5px);
+}
+
+.ink-card h2 {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.divider-ink {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--ink-color), transparent);
+    width: 50%;
+    margin: 0 auto 2rem auto;
+    opacity: 0.5;
+}
+
+/* About Me Typography */
+.about-content {
+    text-align: center;
+}
+
+.lead-text {
+    font-size: 1.2rem;
+    line-height: 2;
+    margin-bottom: 1.5rem;
+}
+
+.lead-text strong {
+    font-weight: bold;
+    color: var(--ink-color);
+    border-bottom: 2px solid rgba(0,0,0,0.1);
+    padding-bottom: 2px;
+}
+
+.punchline {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-top: 2rem;
+    position: relative;
+    display: inline-block;
+}
+
+.reveal-text {
+    font-size: 0.8rem;
+    font-weight: normal;
+    color: var(--ink-light);
+    display: inline-block;
+    vertical-align: middle;
+    text-align: left;
+    margin-left: 10px;
+    opacity: 0.8;
+    line-height: 1.2;
+    transform: rotate(-5deg);
+}
+
+.highlight-name {
+    font-size: 1.5rem;
+    font-family: "KaiTi", "STKaiti", serif; /* Calligraphy font style */
+    color: var(--accent-red);
+    font-weight: bold;
+    border: 1px solid var(--accent-red);
+    padding: 2px 5px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-top: 5px;
+    transform: rotate(5deg);
+}
+
+/* Works Container (New) */
+.works-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+    perspective: 1000px; /* For 3D flip */
+}
+
+.work-card {
+    background-color: transparent;
+    width: 160px;
+    height: 300px;
+    perspective: 1000px;
+    cursor: pointer;
+}
+
+.work-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform-style: preserve-3d;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    background: #fff;
+    border-radius: 4px;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.work-card:hover .work-inner {
+    transform: rotateY(180deg);
+}
+
+.work-front, .work-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    border-radius: 4px;
+}
+
+/* Front Style - Ink Tablet Look */
+.work-front {
+    background-color: #faf9de; /* Restored Rice paper color */
+    color: var(--ink-color);
+    border: 1px solid #e0e0e0;
+    /* Ink smudge decoration */
+    background-image: radial-gradient(circle at 90% 10%, rgba(0,0,0,0.03) 0%, transparent 20%),
+                      radial-gradient(circle at 10% 90%, rgba(0,0,0,0.02) 0%, transparent 20%);
+}
+
+.vertical-text {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    font-size: 2.5rem;
+    letter-spacing: 0.5rem;
+    font-family: "KaiTi", "STKaiti", serif;
+    font-weight: bold;
+    border: 2px solid var(--ink-color);
+    padding: 1rem 0.5rem;
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+}
+
+.ink-decoration {
+    position: absolute;
+    bottom: 20px;
+    width: 35px;
+    height: 35px;
+    background-color: transparent;
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0.9;
+}
+
+.seal-ao {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='2' y='2' width='96' height='96' rx='12' fill='%23b22222'/%3E%3Ctext x='50' y='82' font-size='70' text-anchor='middle' fill='rgba(255,255,255,0.85)' font-family='LiSu, STLiTi, KaiTi, serif' font-weight='bold'%3E傲%3C/text%3E%3C/svg%3E");
+}
+
+.seal-feng {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='2' y='2' width='96' height='96' rx='12' fill='%23b22222'/%3E%3Ctext x='50' y='82' font-size='70' text-anchor='middle' fill='rgba(255,255,255,0.85)' font-family='LiSu, STLiTi, KaiTi, serif' font-weight='bold'%3E风%3C/text%3E%3C/svg%3E");
+}
+
+.seal-han {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='2' y='2' width='96' height='96' rx='12' fill='%23b22222'/%3E%3Ctext x='50' y='82' font-size='70' text-anchor='middle' fill='rgba(255,255,255,0.85)' font-family='LiSu, STLiTi, KaiTi, serif' font-weight='bold'%3E寒%3C/text%3E%3C/svg%3E");
+}
+
+.seal-yue {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='2' y='2' width='96' height='96' rx='12' fill='%23b22222'/%3E%3Ctext x='50' y='82' font-size='70' text-anchor='middle' fill='rgba(255,255,255,0.85)' font-family='LiSu, STLiTi, KaiTi, serif' font-weight='bold'%3E月%3C/text%3E%3C/svg%3E");
+}
+
+/* Back Style - Content Info */
+.work-back {
+    background-color: var(--ink-color);
+    color: #fff;
+    transform: rotateY(180deg);
+    text-align: center;
+}
+
+.work-back h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+    padding-bottom: 0.5rem;
+    width: 80%;
+}
+
+.work-back p {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+}
+
+/* Projects Grid (Deprecated but kept for reference if needed, now replaced by works-container) */
+.projects-grid-deprecated {
+    display: none;
+}
+
+/* Contact & Footer */
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.ink-btn {
+    padding: 10px 30px;
+    border: 1px solid var(--ink-color);
+    color: var(--ink-color);
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.ink-btn:hover {
+    background-color: var(--ink-color);
+    color: #fff;
+}
+
+footer {
+    text-align: center;
+    padding: 2rem;
+    background: #eaeaea;
+    color: var(--ink-light);
+    font-size: 0.9rem;
+}
+
+.seal {
+    display: inline-block;
+    background-color: var(--accent-red);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    margin-left: 5px;
+    font-weight: bold;
+    border: 1px solid #8b0000;
+}
+
+/* Ink Splash Effect - Advanced */
+.ink-drop {
+    position: absolute;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 9999;
+    filter: url(#ink-spread-filter);
+    /* Background and Opacity controlled by JS for dynamic fading */
+}
+
+/* Enhanced Hover Effects */
+.ink-card {
+    background: rgba(255, 255, 255, 0.9); /* Slightly more opaque for texture contrast */
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.ink-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+}
+
+.project-item {
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.project-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, rgba(0,0,0,0.05) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    transform: scale(0.5);
+    z-index: -1;
+}
+
+.project-item:hover::before {
+    opacity: 1;
+    transform: scale(1.5);
+}
+
+.ink-btn {
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.ink-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300%;
+    height: 300%;
+    background: var(--ink-color);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.5s ease;
+    z-index: -1;
+}
+
+.ink-btn:hover {
+    color: #fff;
+    background-color: transparent; /* Override default hover */
+}
+
+.ink-btn:hover::after {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* Animations */
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {transform: translateY(0) translateX(-50%);}
+    40% {transform: translateY(-10px) translateX(-50%);}
+    60% {transform: translateY(-5px) translateX(-50%);}
+}
+
+.fade-in {
+    opacity: 0;
+    animation: fadeIn 1.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.slide-up {
+    /* To be activated by JS intersection observer */
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .ink-title {
+        font-size: 3rem;
+    }
+    
+    .nav-links {
+        display: none; /* Mobile menu simplification for now */
+    }
+    
+    .section-container {
+        padding: 4rem 5%;
+    }
+}

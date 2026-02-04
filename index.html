@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ofyue | 水墨丹青</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <meta name="description" content="Ofyue的个人主页 - 水墨风格">
+</head>
+<body>
+    <!-- SVG Filters for Ink Effects -->
+    <svg style="position: absolute; width: 0; height: 0; pointer-events: none;">
+        <defs>
+            <filter id="ink-spread-filter">
+                <!-- Generate turbulence (noise) -->
+                <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="3" result="noise" />
+                <!-- Displace the source graphic using the noise -->
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="20" xChannelSelector="R" yChannelSelector="G" />
+                <!-- Blur slightly for ink absorption look -->
+                <feGaussianBlur stdDeviation="1" />
+            </filter>
+
+            <!-- New Filter for Rough/Brush Edges -->
+            <filter id="brush-edge" x="-20%" y="-20%" width="140%" height="140%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="3" result="noise" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- 导航栏 -->
+    <nav class="ink-nav">
+        <div class="logo">Ofyue</div>
+        <ul class="nav-links">
+            <li><a href="#home">草堂</a></li>
+            <li><a href="#about">平生</a></li>
+            <li><a href="#works">造物</a></li>
+            <li><a href="#contact">飞鸽</a></li>
+        </ul>
+    </nav>
+
+    <!-- 背景 Canvas -->
+    <canvas id="ink-canvas"></canvas>
+    
+    <!-- 主要内容 -->
+    <main>
+        <!-- 首页/Banner -->
+        <section id="home" class="hero-section">
+            <div class="content-box fade-in">
+                <h1 class="ink-title">怎么可能</h1>
+                <p class="subtitle">"世人笑我太疯癫，我笑代码写不完。"</p>
+                <div class="scroll-indicator">↓</div>
+            </div>
+        </section>
+
+        <!-- 关于我 -->
+        <section id="about" class="section-container">
+            <div class="ink-card slide-up">
+                <h2>关于我</h2>
+                <div class="divider-ink"></div>
+                <div class="about-content">
+                    <p class="lead-text">有那么一个男人，他<strong>善良</strong>、<strong>幽默</strong>、<strong>豁达</strong>、<strong>大度</strong>、<strong>深情</strong>、还<strong>才高八斗</strong>，</p>
+                    <p class="punchline">没错，就是我... <span class="reveal-text">最爱的<br><span class="highlight-name">苏东坡</span></span></p>
+                </div>
+                <div class="divider-ink" style="width: 30%; margin-top: 2rem; opacity: 0.3;"></div>
+                <p style="font-size: 0.9rem; color: #666;">（当然，我也在努力向偶像看齐）</p>
+            </div>
+        </section>
+
+        <!-- 作品集 (重构为：所思所迹) -->
+        <section id="works" class="section-container">
+            <div class="ink-card slide-up" style="max-width: 900px;">
+                <h2>所思所迹</h2>
+                <div class="divider-ink"></div>
+                <p style="text-align: center; color: #666; margin-bottom: 3rem;">
+                    “ 我 即 作 品 ”
+                </p>
+                <div class="works-container">
+                    <!-- 词话 -->
+                    <div class="work-card">
+                        <div class="work-inner">
+                            <div class="work-front">
+                                <span class="vertical-text">词话</span>
+                                <div class="ink-decoration seal-ao"></div>
+                            </div>
+                            <div class="work-back">
+                                <h3>闲词几首</h3>
+                                <p>半纸功名<br>一窗风雨</p>
+                                <div class="spacer"></div>
+                                <p>写点无病呻吟<br>记点人间烟火</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 阅微 -->
+                    <div class="work-card">
+                        <div class="work-inner">
+                            <div class="work-front">
+                                <span class="vertical-text">阅微</span>
+                                <div class="ink-decoration seal-feng"></div>
+                            </div>
+                            <div class="work-back">
+                                <h3>开卷有得</h3>
+                                <p>好读书<br>不求甚解</p>
+                                <div class="spacer"></div>
+                                <p>每有会意<br>便欣然忘食</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 格物 -->
+                    <div class="work-card">
+                        <div class="work-inner">
+                            <div class="work-front">
+                                <span class="vertical-text">格物</span>
+                                <div class="ink-decoration seal-han"></div>
+                            </div>
+                            <div class="work-back">
+                                <h3>技术探究</h3>
+                                <p>致知<br>在格物</p>
+                                <div class="spacer"></div>
+                                <p>代码构建世界<br>逻辑编织未来</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 异想 -->
+                    <div class="work-card">
+                        <div class="work-inner">
+                            <div class="work-front">
+                                <span class="vertical-text">异想</span>
+                                <div class="ink-decoration seal-yue"></div>
+                            </div>
+                            <div class="work-back">
+                                <h3>天马行空</h3>
+                                <p>庄周梦蝶<br>不知虚实</p>
+                                <div class="spacer"></div>
+                                <p>记录每一个<br>荒诞不经的脑洞</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 联系方式 -->
+        <section id="contact" class="section-container">
+            <div class="ink-card slide-up">
+                <h2>鸿雁传书</h2>
+                <div class="divider-ink"></div>
+                <div class="contact-content" style="text-align: center;">
+                    <p style="font-size: 1.5rem; margin-bottom: 1.5rem; font-family: 'KaiTi', serif;">
+                        " <strong style="color: var(--ink-color);">谁在呼叫舰队？</strong> "
+                    </p>
+                    <p style="margin-bottom: 2.5rem; color: #666; font-size: 0.95rem; font-style: italic;">
+                        （ 或是欲煮酒论码，亦不妨致信一封 ）
+                    </p>
+                    <div class="social-links">
+                        <a href="https://github.com/aofenghanyue" target="_blank" class="ink-btn">GitHub</a>
+                        <a href="mailto:1772155440@qq.com" class="ink-btn">Email</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Ofyue. All Rights Reserved. <span class="seal">ofyue印</span></p>
+    </footer>
+
+    <script src="assets/js/script.js"></script>
+</body>
+</html>
