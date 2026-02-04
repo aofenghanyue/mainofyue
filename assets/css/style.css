@@ -598,3 +598,15 @@ footer {
         padding: 4rem 5%;
     }
 }
+
+/* Hide Scrollbar Globally */
+/* Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+    display: none;
+}
+
+/* Firefox, IE, Edge */
+html {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
