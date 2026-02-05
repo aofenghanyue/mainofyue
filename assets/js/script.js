@@ -70,8 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- Main Ink Drop ---
         const drop = document.createElement('div');
         drop.classList.add('ink-drop');
-        drop.style.left = e.pageX + 'px';
-        drop.style.top = e.pageY + 'px';
+        drop.style.left = e.clientX + 'px';
+        drop.style.top = e.clientY + 'px';
         
         // Initial random size
         const initialSize = 10;

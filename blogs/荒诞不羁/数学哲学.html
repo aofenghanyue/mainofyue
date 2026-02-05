@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新古文观止 · 数理哲学篇 | 交互式图鉴</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    
+    <!-- Google Fonts: Noto Serif SC for Classical Feel -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;500;700&family=Noto+Sans+SC:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Hide scrollbar for IE, Edge and Firefox */
+        html {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        
+        /* Seal Style (Replicated from main site) */
+        .seal {
+            display: inline-block;
+            background-color: var(--cinnabar);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-left: 5px;
+            font-weight: bold;
+            border: 1px solid #8b0000;
+            font-family: 'Noto Serif SC', serif;
+        }
+
+        :root {
+            --bg-paper: #F9F7F2; /* Rice Paper */
+            --ink-black: #1a1a1a; /* Ink */
+            --ink-light: #4a4a4a;
+            --cinnabar: #B91C1C; /* Seal Red */
+            --indigo: #312E81; /* Math Blue */
+            --gold: #D4AF37; /* Highlights */
+        }
+
+        body {
+            background-color: var(--bg-paper);
+            color: var(--ink-black);
+            font-family: 'Noto Sans SC', sans-serif;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .classical-text {
+            font-family: 'Noto Serif SC', serif;
+        }
+
+        /* Chart Container Styling - Mandatory Requirement */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Constrain width for readability */
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px; /* Base height */
+            max-height: 400px;
+        }
+        
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+
+        .section-divider {
+            border-top: 1px solid #e5e7eb;
+            margin: 3rem 0;
+            position: relative;
+        }
+        .section-divider::after {
+            content: '§';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-paper);
+            padding: 0 1rem;
+            color: #9CA3AF;
+        }
+
+        .btn-ink {
+            background-color: var(--ink-black);
+            color: #fff;
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.25rem;
+            transition: all 0.3s ease;
+            font-family: 'Noto Serif SC', serif;
+            letter-spacing: 0.1em;
+        }
+        .btn-ink:hover {
+            background-color: var(--cinnabar);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .math-font {
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+        }
+
+        /* Custom Scrollbar */
+        /*
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        */
+    </style>
+
+    <!-- Application Structure Plan: 
+         Designed as a vertical "scroll" (reminiscent of Chinese painting scrolls).
+         1. Hero: Intro & "Prerequisite Check" (Interaction: Filter audience).
+         2. Sticky Nav: To jump between the 3 Volumes (Analysis, Algebra, Topology).
+         3. The Nine Realms (Content Blocks): Each block pairs the Classical Text (Source) with an Interactive Math Viz (Goal).
+            - Users read the quote, then play with the math model to "see" the isomorphism.
+         4. Finale: Euler's Identity & Interactive "Coin Toss" (To Be/Not To Be).
+         WHY: This structure mirrors the linear progression of the video script while allowing nonlinear exploration of specific concepts.
+    -->
+</head>
+<body class="antialiased">
+
+    <!-- Hero Section -->
+    <header class="min-h-screen flex flex-col justify-center items-center text-center px-4 relative border-b-4 border-double border-gray-300">
+        <div class="mb-6">
+            <span class="inline-block border border-gray-800 px-3 py-1 text-sm tracking-widest uppercase mb-4">Interactive Anthology</span>
+            <h1 class="text-5xl md:text-7xl font-bold mb-2 tracking-wide">新古文观止</h1>
+            <h2 class="text-2xl md:text-3xl font-light text-gray-600 mb-8 italic">数理哲学篇</h2>
+        </div>
+        
+        <div class="max-w-2xl mx-auto space-y-6">
+            <p class="text-lg leading-loose classical-text text-gray-700">
+                “常有人言，数学枯燥，古文晦涩。然夜读深思，惊觉二者实为同构。”
+            </p>
+            <p class="text-sm text-gray-500 font-mono bg-gray-100 p-2 rounded inline-block">
+                WARNING: MATH HAZARD DETECTED
+            </p>
+            <div id="prerequisite-check" class="mt-8 p-6 border border-dashed border-gray-400 rounded-lg bg-white bg-opacity-50">
+                <p class="mb-4 font-bold text-lg">【观看门槛自检】</p>
+                <p class="mb-6 text-gray-600">如果你人生中“积”的，还没有“导”的多……当然我说的是微积分</p>
+                <div class="flex justify-center gap-4">
+                    <button onclick="checkMath('fail')" class="px-4 py-2 border border-gray-300 text-gray-500 hover:bg-gray-100 rounded">我选择退出</button>
+                    <button onclick="checkMath('pass')" class="btn-ink">微积分，启动！</button>
+                </div>
+                <p id="math-msg" class="mt-4 text-sm font-bold text-red-700 hidden"></p>
+            </div>
+        </div>
+        
+        <div class="absolute bottom-10 animate-bounce text-gray-400">
+            <span class="text-2xl">↓</span> 卷轴由此展开
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 bg-[#F9F7F2]/95 backdrop-blur shadow-sm border-b border-gray-200 py-3 overflow-x-auto">
+        <ul class="flex justify-center min-w-max px-4 space-x-8 text-sm md:text-base font-serif">
+            <li><a href="../../index.html" class="hover:text-red-700 transition-colors font-bold">← 返回草堂</a></li>
+            <li><a href="#vol1" class="hover:text-red-700 transition-colors">卷一 · 分析学与时间</a></li>
+            <li><a href="#vol2" class="hover:text-red-700 transition-colors">卷二 · 代数学与本体</a></li>
+            <li><a href="#vol3" class="hover:text-red-700 transition-colors">卷三 · 拓扑与极限</a></li>
+            <li><a href="#finale" class="hover:text-red-700 transition-colors font-bold">终章 · 归零</a></li>
+        </ul>
+    </nav>
+
+    <main class="max-w-5xl mx-auto px-4 py-12">
+
+        <!-- VOLUME 1 -->
+        <section id="vol1" class="mb-24 scroll-mt-24">
+            <div class="text-center mb-16">
+                <span class="text-red-700 font-bold tracking-widest text-sm block mb-2">VOLUME I</span>
+                <h2 class="text-4xl font-serif mb-4">第一卷：分析学与时间观</h2>
+                <p class="text-gray-500 max-w-2xl mx-auto">关于变与不变的积分变换。本卷收录苏轼、佛理与杜牧，探讨时间流逝中的频率、记忆与递归。</p>
+            </div>
+
+            <!-- 01. Fourier -->
+            <div class="grid md:grid-cols-2 gap-12 items-center mb-20">
+                <div class="space-y-6">
+                    <div class="border-l-4 border-gray-800 pl-6 py-2">
+                        <h3 class="text-2xl font-serif mb-2">01. 苏轼与傅里叶变换</h3>
+                        <p class="classical-text text-lg text-gray-700 italic">“盖将自其变者而观之，则天地曾不能以一瞬；自其不变者而观之，则物与我皆无尽也。”</p>
+                        <p class="text-right text-sm text-gray-500 mt-2">——《赤壁赋》</p>
+                    </div>
+                    <div class="bg-white p-6 rounded shadow-sm border border-gray-100">
+                        <h4 class="font-bold text-indigo-900 mb-2 text-sm uppercase">数学同构：时频对偶性</h4>
+                        <p class="text-sm leading-relaxed text-gray-600">
+                            苏东坡的“变”即<strong>时域（Time Domain）</strong>，波形瞬息万变；“不变”即<strong>频域（Frequency Domain）</strong>，通过傅里叶变换积分，我们看到的是永恒的频谱密度。赤壁那杯酒，就是一次模数转换（ADC）。
+                        </p>
+                    </div>
+                </div>
+                <div>
+                    <div class="bg-white p-4 rounded-lg shadow-md border border-gray-200">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-xs font-bold text-gray-500">交互演示：切换视角</span>
+                            <div class="space-x-2">
+                                <button onclick="toggleFourier('time')" class="text-xs px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded" id="btn-time">自其变者 (时域)</button>
+                                <button onclick="toggleFourier('freq')" class="text-xs px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded" id="btn-freq">自其不变者 (频域)</button>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="chartFourier"></canvas>
+                        </div>
+                        <p id="fourier-caption" class="text-center text-xs text-gray-500 mt-2 italic">当前视图：时域波形 - 瞬息万变</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <!-- 02. Convolution -->
+            <div class="grid md:grid-cols-2 gap-12 items-center mb-20">
+                <div class="order-2 md:order-1">
+                    <div class="bg-white p-4 rounded-lg shadow-md border border-gray-200">
+                        <div class="mb-4">
+                            <span class="text-xs font-bold text-gray-500">交互演示：植树与业力</span>
+                            <button onclick="addKarma()" class="w-full mt-2 btn-ink text-sm">前人栽树 (输入脉冲)</button>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="chartConvolution"></canvas>
+                        </div>
+                        <p class="text-center text-xs text-gray-500 mt-2 italic">系统响应 (y) = 输入 (x) * 记忆衰减 (h)</p>
+                    </div>
+                </div>
+                <div class="space-y-6 order-1 md:order-2">
+                    <div class="border-l-4 border-gray-800 pl-6 py-2">
+                        <h3 class="text-2xl font-serif mb-2">02. 因果业力与卷积</h3>
+                        <p class="classical-text text-lg text-gray-700 italic">“前人栽树，后人乘凉。” / “万法皆空，因果不空。”</p>
+                        <p class="text-right text-sm text-gray-500 mt-2">—— 民谚 / 佛理</p>
+                    </div>
+                    <div class="bg-white p-6 rounded shadow-sm border border-gray-100">
+                        <h4 class="font-bold text-indigo-900 mb-2 text-sm uppercase">数学同构：卷积 (Convolution)</h4>
+                        <p class="text-sm leading-relaxed text-gray-600">
+                            人生是一个线性时不变系统（LTI）。当下的“我”不仅受此刻影响，更是过去所有时刻输入信号的加权叠加。数学上，这就是卷积积分。记忆是系统的脉冲响应。
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <!-- 03. Fractal -->
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6">
+                    <div class="border-l-4 border-gray-800 pl-6 py-2">
+                        <h3 class="text-2xl font-serif mb-2">03. 杜牧与分形递归</h3>
+                        <p class="classical-text text-lg text-gray-700 italic">“秦人不暇自哀，而后人哀之；后人哀之而不鉴之，亦使后人而复哀后人也。”</p>
+                        <p class="text-right text-sm text-gray-500 mt-2">——《阿房宫赋》</p>
+                    </div>
+                    <div class="bg-white p-6 rounded shadow-sm border border-gray-100">
+                        <h4 class="font-bold text-indigo-900 mb-2 text-sm uppercase">数学同构：分形与递归</h4>
+                        <p class="text-sm leading-relaxed text-gray-600">
+                            杜牧描述了一个标准的递归函数。只要初始参数（贪婪）不变，历史就会呈现惊人的<strong>自相似性 (Self-similarity)</strong>。我们被困在混沌系统的吸引子中，周而复始。
+                        </p>
+                    </div>
+                </div>
+                <div>
+                    <div class="bg-white p-4 rounded-lg shadow-md border border-gray-200">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-xs font-bold text-gray-500">交互演示：递归深度</span>
+                            <input type="range" min="0" max="6" value="0" id="fractalRange" class="w-1/2 accent-gray-800" oninput="drawFractalTree(this.value)">
+                        </div>
+                        <div class="chart-container flex justify-center items-center bg-gray-50 overflow-hidden">
+                            <canvas id="canvasFractal" width="400" height="350"></canvas>
+                        </div>
+                        <p id="fractal-text" class="text-center text-xs text-gray-500 mt-2 italic">Depth: 0 (无尽的循环)</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VOLUME 2 -->
+        <section id="vol2" class="mb-24 scroll-mt-24">
+            <div class="text-center mb-16">
+                <span class="text-red-700 font-bold tracking-widest text-sm block mb-2">VOLUME II</span>
+                <h2 class="text-4xl font-serif mb-4">第二卷：代数学与本体论</h2>
+                <p class="text-gray-500 max-w-2xl mx-auto">关于存在与定义的线性空间。本卷收录庄子、元稹，探讨复平面的维度、特征向量的定力与狄拉克函数的唯一性。</p>
+            </div>
+
+            <!-- 04. Complex Plane -->
+            <div class="grid md:grid-cols-2 gap-12 items-center mb-20">
+                <div class="order-2 md:order-1">
+                    <div class="bg-white p-4 rounded-lg shadow-md border border-gray-200">
+                        <div class="mb-4">
+                            <span class="text-xs font-bold text-gray-500">交互演示：物化旋转</span>
+                            <label class="block text-xs text-gray-400 mt-1">拖动滑块改变相位角 $\theta$</label>
+                            <input type="range" min="0" max="360" value="45" id="phaseRange" class="w-full accent-indigo-600" oninput="updateComplexPlot(this.value)">
+                        </div>
+                        <div id="plotComplex" class="chart-container"></div>
+                        <p class="text-center text-xs text-gray-500 mt-2 italic">$z' = z \cdot e^{i\theta}$ (实部为庄周，虚部为蝶)</p>
+                    </div>
+                </div>
+                <div class="space-y-6 order-1 md:order-2">
+                    <div class="border-l-4 border-gray-800 pl-6 py-2">
+                        <h3 class="text-2xl font-serif mb-2">04. 庄周与复平面</h3>
+                        <p class="classical-text text-lg text-gray-700 italic">“不知周之梦为胡蝶与？胡蝶之梦为周与？”</p>
+                        <p class="text-right text-sm text-gray-500 mt-2">——《庄子·齐物论》</p>
+                    </div>
+                    <div class="bg-white p-6 rounded shadow-sm border border-gray-100">
+                        <h4 class="font-bold text-indigo-900 mb-2 text-sm uppercase">数学同构：复变函数</h4>
+                        <p class="text-sm leading-relaxed text-gray-600">
+                            人生是一个复数。实轴是肉身，虚轴是梦境。所谓“物化”，不过是在黎曼曲面上做了一个相位角的旋转。在复平面的全局视角下，梦境与现实拥有同等的本体论地位。
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <!-- 05. Eigenvector -->
+            <div class="grid md:grid-cols-2 gap-12 items-center mb-20">
+                <div class="space-y-6">
+                    <div class="border-l-4 border-gray-800 pl-6 py-2">
+                        <h3 class="text-2xl font-serif mb-2">05. 君子与特征向量</h3>
+                        <p class="classical-text text-lg text-gray-700 italic">“举世而誉之而不加劝，举世而非之而不加沮。”</p>
+                        <p class="text-right text-sm text-gray-500 mt-2">——《庄子·逍遥游》</p>
+                    </div>
+                    <div class="bg-white p-6 rounded shadow-sm border border-gray-100">
+                        <h4 class="font-bold text-indigo-900 mb-2 text-sm uppercase">数学同构：特征向量 (Eigenvector)</h4>
+                        <p class="text-sm leading-relaxed text-gray-600">
+                            红尘是一个变换矩阵 $A$。众生（普通向量）随波逐流，被旋转得迷失方向。唯有君子（特征向量）不被改变方向，只会被荣辱（特征值 $\lambda$）拉伸或压缩。这就是定力。
+                        </p>
+                    </div>
+                </div>
+                <div>
+                    <div class="bg-white p-4 rounded-lg shadow-md border border-gray-200">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-xs font-bold text-gray-500">交互演示：矩阵变换</span>
+                            <button onclick="transformVectors()" class="text-xs btn-ink">施加红尘变换 (Apply Matrix)</button>
+                        </div>
+                        <div class="chart-container flex justify-center items-center bg-gray-50 overflow-hidden relative">
+                            <canvas id="canvasEigen" width="400" height="350"></canvas>
+                            <div class="absolute bottom-2 left-2 text-xs bg-white bg-opacity-80 p-1">
+                                <span class="text-red-600 font-bold">红色：君子 (方向不变)</span><br>
+                                <span class="text-gray-400">灰色：众生 (随波逐流)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <!-- 06. Dirac Delta -->
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="order-2 md:order-1">
+                    <div class="bg-white p-4 rounded-lg shadow-md border border-gray-200">
+                        <div class="mb-4">
+                            <span class="text-xs font-bold text-gray-500">交互演示：深情聚焦 (Limit $\to \infty$)</span>
+                            <input type="range" min="0.1" max="5" step="0.1" value="5" id="sigmaRange" class="w-full accent-red-700" oninput="updateDirac(this.value)">
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="chartDirac"></canvas>
+                        </div>
+                        <p class="text-center text-xs text-gray-500 mt-2 italic">弱水三千，仅取一瓢的高能脉冲</p>
+                    </div>
+                </div>
+                <div class="space-y-6 order-1 md:order-2">
+                    <div class="border-l-4 border-gray-800 pl-6 py-2">
+                        <h3 class="text-2xl font-serif mb-2">06. 元稹与狄拉克函数</h3>
+                        <p class="classical-text text-lg text-gray-700 italic">“曾经沧海难为水，除却巫山不是云。”</p>
+                        <p class="text-right text-sm text-gray-500 mt-2">——《离思》</p>
+                    </div>
+                    <div class="bg-white p-6 rounded shadow-sm border border-gray-100">
+                        <h4 class="font-bold text-indigo-900 mb-2 text-sm uppercase">数学同构：奇异性 (Singularity)</h4>
+                        <p class="text-sm leading-relaxed text-gray-600">
+                            常人之情分布均匀，唯独在“巫山”这一点，函数值陡然趋向无穷大。这是数学上的<strong>奇异性</strong>，即狄拉克 $\delta$ 函数。在此点之外，万物归零。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VOLUME 3 -->
+        <section id="vol3" class="mb-24 scroll-mt-24">
+            <div class="text-center mb-16">
+                <span class="text-red-700 font-bold tracking-widest text-sm block mb-2">VOLUME III</span>
+                <h2 class="text-4xl font-serif mb-4">第三卷：拓扑与极限之美</h2>
+                <p class="text-gray-500 max-w-2xl mx-auto">关于结构与归宿的思量。本卷收录王勃、辛弃疾与六祖慧能，探讨距离的虚妄、算法的收敛与万物的归零。</p>
+            </div>
+
+            <!-- 07. Topology -->
+            <div class="grid md:grid-cols-2 gap-12 items-center mb-20">
+                <div class="space-y-6">
+                    <div class="border-l-4 border-gray-800 pl-6 py-2">
+                        <h3 class="text-2xl font-serif mb-2">07. 王勃与拓扑同胚</h3>
+                        <p class="classical-text text-lg text-gray-700 italic">“海内存知己，天涯若比邻。”</p>
+                        <p class="text-right text-sm text-gray-500 mt-2">——《送杜少府之任蜀州》</p>
+                    </div>
+                    <div class="bg-white p-6 rounded shadow-sm border border-gray-100">
+                        <h4 class="font-bold text-indigo-900 mb-2 text-sm uppercase">数学同构：拓扑连通性</h4>
+                        <p class="text-sm leading-relaxed text-gray-600">
+                            在欧氏几何中，距离决定远近。但在拓扑学中，只要存在连续双射，二者便是<strong>同胚 (Homeomorphic)</strong>。“知己”是连通映射，哪怕物理拉伸至无穷，拓扑结构依然在同一邻域。
+                        </p>
+                    </div>
+                </div>
+                <div>
+                    <div class="bg-white p-4 rounded-lg shadow-md border border-gray-200">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-xs font-bold text-gray-500">交互演示：拉伸变形</span>
+                            <button onclick="stretchTopology()" class="text-xs btn-ink">拉伸时空 (Distort Space)</button>
+                        </div>
+                        <div class="chart-container flex justify-center items-center bg-gray-50 overflow-hidden relative" id="topology-container">
+                            <canvas id="canvasTopology" width="400" height="350"></canvas>
+                        </div>
+                        <p class="text-center text-xs text-gray-500 mt-2 italic">物理距离虽变，连接关系不变</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <!-- 08. Global Convergence -->
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="order-2 md:order-1">
+                    <div class="bg-white p-4 rounded-lg shadow-md border border-gray-200">
+                        <div class="mb-4">
+                            <span class="text-xs font-bold text-gray-500">交互演示：全局搜索</span>
+                            <button onclick="startSearch()" class="text-xs btn-ink w-full mt-2">众里寻他 (Start Iteration)</button>
+                        </div>
+                        <div id="plotConvergence" class="chart-container"></div>
+                        <p id="search-status" class="text-center text-xs text-gray-500 mt-2 italic">状态：随机游走中...</p>
+                    </div>
+                </div>
+                <div class="space-y-6 order-1 md:order-2">
+                    <div class="border-l-4 border-gray-800 pl-6 py-2">
+                        <h3 class="text-2xl font-serif mb-2">08. 辛弃疾与全局收敛</h3>
+                        <p class="classical-text text-lg text-gray-700 italic">“众里寻他千百度，蓦然回首，那人却在，灯火阑珊处。”</p>
+                        <p class="text-right text-sm text-gray-500 mt-2">——《青玉案·元夕》</p>
+                    </div>
+                    <div class="bg-white p-6 rounded shadow-sm border border-gray-100">
+                        <h4 class="font-bold text-indigo-900 mb-2 text-sm uppercase">数学同构：优化算法收敛</h4>
+                        <p class="text-sm leading-relaxed text-gray-600">
+                            “众里寻他”是高维噪声空间中的全局搜索；“千百度”是无穷迭代；“蓦然回首”是算法收敛至全局最优解（Global Minimum）。缘分，是概率分布的瞬间坍缩，是小概率事件在时空坐标系中的精确碰撞。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FINALE -->
+        <section id="finale" class="mb-24 pt-12 border-t-8 border-gray-800">
+            <div class="text-center mb-12">
+                <h2 class="text-5xl font-serif mb-6 text-gray-900">终章 · 归零</h2>
+                <div class="text-2xl classical-text mb-8">“本来无一物，何处惹尘埃。”</div>
+                <div class="math-font text-4xl md:text-6xl text-indigo-900 mb-8 tracking-widest">
+                    e<sup class="text-2xl md:text-4xl">iπ</sup> + 1 = 0
+                </div>
+                <p class="text-gray-500 max-w-xl mx-auto leading-relaxed">
+                    $e$（生生不息）与 $\pi$（完美循环）代表万物繁华；<br>
+                    $i$（虚数）代表不可见的维度与灵性；<br>
+                    $1$（实相）代表存在。<br>
+                    当它们汇聚，优雅地归于空（Zero）。
+                </p>
+            </div>
+
+            <!-- The Question -->
+            <div class="max-w-md mx-auto bg-gray-900 text-white p-8 rounded-xl shadow-2xl text-center relative overflow-hidden group">
+                <!-- Glitch effect container -->
+                <div class="absolute inset-0 bg-red-900 opacity-0 group-hover:opacity-10 transition-opacity duration-100"></div>
+                
+                <h3 class="text-xl font-mono text-green-400 mb-6 border-b border-gray-700 pb-2">THE ULTIMATE QUESTION</h3>
+                
+                <div class="space-y-4 mb-8">
+                    <p class="text-2xl font-serif">To Be (投币)</p>
+                    <p class="text-gray-500 text-sm">--- OR ---</p>
+                    <p class="text-2xl font-serif text-gray-400 group-hover:text-red-500 transition-colors">Not To Be (毁灭)</p>
+                </div>
+
+                <div class="relative">
+                    <button id="coinBtn" onclick="tossCoin()" class="w-full bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-4 rounded shadow-[0_0_15px_rgba(217,119,6,0.5)] transition-all transform hover:scale-105 active:scale-95">
+                        <span id="btnText">THAT IS A QUESTION</span>
+                    </button>
+                    <div id="coin-feedback" class="absolute -top-12 left-0 w-full text-center text-yellow-400 font-bold opacity-0 transition-all duration-500">
+                        +1 智慧延续
+                    </div>
+                </div>
+
+                <p class="mt-6 text-xs text-gray-600 font-mono">存在即投币。 Existence is Coin-tossing.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-100 py-12 text-center border-t border-gray-300">
+        <div class="max-w-4xl mx-auto px-4">
+            <h4 class="font-serif text-xl mb-4 text-gray-800">新古文观止 · 数理哲学篇</h4>
+            <p class="text-gray-500 text-sm mb-2">寻章摘句，非为附会。心之所向，数之所系。</p>
+            <p class="text-xs text-gray-400 mt-8">
+                Design & Logic by <span class="seal">ofyue印</span> | Note: 本文章未收录《高数》挂科重修之同构
+            </p>
+        </div>
+    </footer>
+
+    <!-- LOGIC SCRIPT -->
+    <script>
+        // <!-- Visualization & Content Choices: 
+        // 1. Fourier: Chart.js Bar vs Line. Toggle between Time (Sine wave combo) and Freq (Bars).
+        // 2. Convolution: Chart.js Bar. "Adding" inputs creates a decaying tail that sums up.
+        // 3. Fractal: Canvas API. Recursive function drawing a tree structure. Slider controls depth.
+        // 4. Complex: Plotly Scatter. A point moves in a circle. User controls angle. Shows Re vs Im.
+        // 5. Eigenvector: Canvas API. Draw arrows. Some rotate, one (red) only scales.
+        // 6. Dirac: Chart.js Line. Gaussian function with variable sigma.
+        // 7. Topology: Canvas API. Two nodes connected by a bezier curve. User moves nodes, curve updates (connectivity kept).
+        // 8. Convergence: Plotly Contour. A path simulates gradient descent.
+        // 9. Euler/Coin: Simple DOM manipulation for interactive storytelling.
+        // -->
+        
+        // --- 0. PRE-FLIGHT ---
+        function checkMath(choice) {
+            const msg = document.getElementById('math-msg');
+            if (choice === 'fail') {
+                msg.textContent = "明智的选择。有些积，导不出来就不必强求。";
+                msg.className = "mt-4 text-sm font-bold text-gray-500 block";
+            } else {
+                msg.textContent = "勇气可嘉！准备加载数学引擎...";
+                msg.className = "mt-4 text-sm font-bold text-green-700 block";
+                setTimeout(() => {
+                    document.getElementById('prerequisite-check').style.display = 'none';
+                    document.getElementById('vol1').scrollIntoView({ behavior: 'smooth' });
+                }, 800);
+            }
+        }
+
+        // --- 1. FOURIER TRANSFORM ---
+        const ctxFourier = document.getElementById('chartFourier').getContext('2d');
+        let fourierChart;
+        
+        // Generate Mock Data
+        const timeLabels = Array.from({length: 50}, (_, i) => i);
+        // A complex wave: sin(x) + 0.5sin(3x) + noise
+        const timeData = timeLabels.map(x => Math.sin(x/5) + 0.5 * Math.sin(x*3/5) + (Math.random()*0.1));
+        const freqData = [0, 10, 0, 5, 0, 2, 0, 0, 1, 0]; // Fake spectrum
+        const freqLabels = ['1Hz', '2Hz', '3Hz', '4Hz', '5Hz', '6Hz', '7Hz', '8Hz', '9Hz', '10Hz'];
+
+        function initFourier() {
+            fourierChart = new Chart(ctxFourier, {
+                type: 'line',
+                data: {
+                    labels: timeLabels,
+                    datasets: [{
+                        label: '红尘表象 (时域)',
+                        data: timeData,
+                        borderColor: '#4F46E5',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        fill: true,
+                        backgroundColor: 'rgba(79, 70, 229, 0.1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: { duration: 1000 },
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { display: false },
+                        y: { display: false } // Abstract view
+                    }
+                }
+            });
+        }
+
+        function toggleFourier(mode) {
+            const caption = document.getElementById('fourier-caption');
+            const btnTime = document.getElementById('btn-time');
+            const btnFreq = document.getElementById('btn-freq');
+
+            if (mode === 'freq') {
+                fourierChart.config.type = 'bar';
+                fourierChart.data.labels = freqLabels;
+                fourierChart.data.datasets[0].data = freqData;
+                fourierChart.data.datasets[0].label = '永恒真理 (频域)';
+                fourierChart.data.datasets[0].backgroundColor = '#B91C1C';
+                fourierChart.data.datasets[0].borderColor = '#B91C1C';
+                caption.textContent = "当前视图：频域频谱 - 物与我皆无尽";
+                btnFreq.classList.add('bg-gray-400');
+                btnTime.classList.remove('bg-gray-400');
+            } else {
+                fourierChart.config.type = 'line';
+                fourierChart.data.labels = timeLabels;
+                fourierChart.data.datasets[0].data = timeData;
+                fourierChart.data.datasets[0].label = '红尘表象 (时域)';
+                fourierChart.data.datasets[0].backgroundColor = 'rgba(79, 70, 229, 0.1)';
+                fourierChart.data.datasets[0].borderColor = '#4F46E5';
+                caption.textContent = "当前视图：时域波形 - 瞬息万变";
+                btnTime.classList.add('bg-gray-400');
+                btnFreq.classList.remove('bg-gray-400');
+            }
+            fourierChart.update();
+        }
+
+        // --- 2. CONVOLUTION (KARMA) ---
+        const ctxConv = document.getElementById('chartConvolution').getContext('2d');
+        let convChart;
+        // 20 time steps
+        let karmaHistory = new Array(20).fill(0); 
+
+        function initConv() {
+            convChart = new Chart(ctxConv, {
+                type: 'bar',
+                data: {
+                    labels: Array.from({length: 20}, (_, i) => `t-${20-i}`),
+                    datasets: [{
+                        label: '系统记忆 (Memory)',
+                        data: karmaHistory,
+                        backgroundColor: '#D4AF37' // Gold
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, max: 10, display: false },
+                        x: { display: false }
+                    },
+                    animation: { duration: 500 }
+                }
+            });
+        }
+
+        function addKarma() {
+            // Shift history left
+            karmaHistory.shift();
+            // Add new "Cause" at the end (Input = 5)
+            karmaHistory.push(5);
+            
+            // Apply decay to entire array (Impulse response h(t) is decaying)
+            // Simulating: New state = Old state * decay + input
+            // Actually, for visualization, let's just make the bars decay visually to left
+            // Simple visual simulation:
+            for(let i=0; i<karmaHistory.length-1; i++) {
+                karmaHistory[i] = Math.max(0, karmaHistory[i] * 0.85); // Decay factor
+            }
+
+            convChart.update();
+        }
+
+        // --- 3. FRACTAL (RECURSION) ---
+        const cFractal = document.getElementById('canvasFractal');
+        const ctxFractal = cFractal.getContext('2d');
+        
+        function drawBranch(startX, startY, length, angle, depth, branchWidth) {
+            ctxFractal.beginPath();
+            ctxFractal.save();
+            ctxFractal.strokeStyle = "#1a1a1a";
+            ctxFractal.lineWidth = branchWidth;
+            ctxFractal.translate(startX, startY);
+            ctxFractal.rotate(angle * Math.PI/180);
+            ctxFractal.moveTo(0, 0);
+            ctxFractal.lineTo(0, -length);
+            ctxFractal.stroke();
+
+            if(depth < 10) { // Limit for browser safety
+                ctxFractal.translate(0, -length);
+                drawBranch(0, 0, length * 0.7, -25, depth + 1, branchWidth * 0.7);
+                drawBranch(0, 0, length * 0.7, 25, depth + 1, branchWidth * 0.7);
+            }
+            ctxFractal.restore();
+        }
+
+        function drawFractalTree(depthVal) {
+            const maxDepth = parseInt(depthVal) + 2; // offset for visual
+            ctxFractal.clearRect(0, 0, cFractal.width, cFractal.height);
+            
+            // Base trunk
+            // We interpret user input 0-6 as actual recursion depth 2-8
+            const visualDepth = parseInt(depthVal);
+            
+            document.getElementById('fractal-text').textContent = `Recursion Depth: ${visualDepth} ${visualDepth > 4 ? '(悲剧的极限循环)' : ''}`;
+            
+            // Start drawing
+            drawBranch(cFractal.width/2, cFractal.height, 80, 0, 10 - visualDepth - 2, 8); 
+            // Note: My recursive logic above counts UP to 10. 
+            // Let's rewrite simple standard recursion:
+            
+            ctxFractal.clearRect(0, 0, cFractal.width, cFractal.height);
+            recursiveTree(cFractal.width/2, cFractal.height, 70, -90, visualDepth);
+        }
+
+        function recursiveTree(x, y, len, angle, depth) {
+            if (depth < 0) return;
+
+            const x2 = x + len * Math.cos(angle * Math.PI / 180);
+            const y2 = y + len * Math.sin(angle * Math.PI / 180);
+
+            ctxFractal.beginPath();
+            ctxFractal.strokeStyle = depth === 0 ? "#B91C1C" : "#1a1a1a"; // Leaves are red
+            ctxFractal.lineWidth = depth + 1;
+            ctxFractal.moveTo(x, y);
+            ctxFractal.lineTo(x2, y2);
+            ctxFractal.stroke();
+
+            recursiveTree(x2, y2, len * 0.75, angle - 20, depth - 1);
+            recursiveTree(x2, y2, len * 0.75, angle + 20, depth - 1);
+        }
+
+
+        // --- 4. COMPLEX PLANE (ZHUANGZI) ---
+        function initComplex() {
+            const layout = {
+                xaxis: {range: [-1.5, 1.5], title: 'Real (周)', zeroline: true},
+                yaxis: {range: [-1.5, 1.5], title: 'Imaginary (蝶)', zeroline: true},
+                margin: {t: 20, b: 40, l: 40, r: 20},
+                paper_bgcolor: '#F9F7F2',
+                plot_bgcolor: '#F9F7F2',
+                showlegend: false
+            };
+            
+            Plotly.newPlot('plotComplex', [{
+                x: [0.7], y: [0.7],
+                mode: 'markers+text',
+                type: 'scatter',
+                text: ['庄周/蝶'],
+                textposition: 'top right',
+                marker: {size: 15, color: '#4F46E5'}
+            }, {
+                x: [0, 0.7], y: [0, 0.7],
+                mode: 'lines',
+                line: {dash: 'dot', color: '#ccc'}
+            }], layout, {staticPlot: false, displayModeBar: false});
+        }
+
+        function updateComplexPlot(deg) {
+            const rad = deg * Math.PI / 180;
+            const r = 1; // Modulus
+            const x = r * Math.cos(rad);
+            const y = r * Math.sin(rad);
+            
+            const update = {
+                x: [[x], [0, x]],
+                y: [[y], [0, y]]
+            };
+            
+            Plotly.update('plotComplex', update);
+        }
+
+        // --- 5. EIGENVECTOR (GENTLEMAN) ---
+        const cEigen = document.getElementById('canvasEigen');
+        const ctxEigen = cEigen.getContext('2d');
+        const vectors = []; // Array of {x, y, color, isEigen}
+
+        // Initialize vectors
+        function initVectors() {
+            vectors.length = 0;
+            // The "Gentleman" Eigenvector (Vertical)
+            vectors.push({x: 0, y: -80, color: '#B91C1C', isEigen: true, label: '君子'});
+            
+            // The "Masses" (Random vectors)
+            for(let i=0; i<10; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                vectors.push({
+                    x: Math.cos(angle) * 60,
+                    y: Math.sin(angle) * 60,
+                    color: '#9CA3AF',
+                    isEigen: false
+                });
+            }
+            drawVectors();
+        }
+
+        function drawVectors() {
+            ctxEigen.clearRect(0, 0, cEigen.width, cEigen.height);
+            const cx = cEigen.width / 2;
+            const cy = cEigen.height / 2;
+
+            // Draw axis
+            ctxEigen.strokeStyle = "#e5e7eb";
+            ctxEigen.beginPath(); ctxEigen.moveTo(cx, 0); ctxEigen.lineTo(cx, cEigen.height); ctxEigen.stroke();
+            ctxEigen.beginPath(); ctxEigen.moveTo(0, cy); ctxEigen.lineTo(cEigen.width, cy); ctxEigen.stroke();
+
+            vectors.forEach(v => {
+                ctxEigen.beginPath();
+                ctxEigen.moveTo(cx, cy);
+                ctxEigen.lineTo(cx + v.x, cy + v.y);
+                ctxEigen.strokeStyle = v.color;
+                ctxEigen.lineWidth = v.isEigen ? 3 : 1;
+                ctxEigen.stroke();
+                
+                // Arrowhead
+                // ... skipped for brevity, just lines
+            });
+        }
+
+        function transformVectors() {
+            // Apply a transformation matrix A = [[1.2, 0.5], [0, 0.8]]
+            // This is just a visual shear/scale.
+            // But we want to simulate an Eigenvector. 
+            // Let's use A that keeps Y-axis vector (0, y) pointing up/down but scales it.
+            // Matrix A = [[cos a, -sin a], [sin a, cos a]] (Rotation) -> No real eigenvectors usually
+            // Let's use a diagonal matrix [[0.5, 0], [0, 1.5]] -> X shrinks, Y stretches.
+            
+            vectors.forEach(v => {
+                if (v.isEigen) {
+                    // Only stretch Y
+                    v.y *= 1.2; 
+                    if(Math.abs(v.y) > 120) v.y = -80; // Reset if too big
+                } else {
+                    // Rotate the others (simulating the "Rotation" of the world)
+                    const oldX = v.x;
+                    const oldY = v.y;
+                    const angle = 0.3; // Rotate 
+                    v.x = oldX * Math.cos(angle) - oldY * Math.sin(angle);
+                    v.y = oldX * Math.sin(angle) + oldY * Math.cos(angle);
+                }
+            });
+            drawVectors();
+        }
+
+        // --- 6. DIRAC DELTA ---
+        const ctxDirac = document.getElementById('chartDirac').getContext('2d');
+        let diracChart;
+        
+        function gaussian(x, mu, sigma) {
+            return (1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2));
+        }
+
+        function initDirac() {
+            const labels = [];
+            const data = [];
+            for (let i = -10; i <= 10; i+=0.5) {
+                labels.push(i);
+                data.push(gaussian(i, 0, 2)); // Initial sigma = 2
+            }
+
+            diracChart = new Chart(ctxDirac, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '深情分布 f(x)',
+                        data: data,
+                        borderColor: '#B91C1C',
+                        backgroundColor: 'rgba(185, 28, 28, 0.2)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { min: 0, max: 2 }, // Fixed scale to show the spike
+                        x: { display: false }
+                    },
+                    animation: { duration: 0 } // Fast update
+                }
+            });
+        }
+
+        function updateDirac(val) {
+            // val comes in from 5 (wide) to 0.1 (narrow)
+            // But input slider logic: min 0.1 max 5. 
+            // We want slider left -> narrow? Or right -> narrow?
+            // Let's assume Right (Max) -> Focus. 
+            // Wait, slider value is currently used as Sigma directly.
+            // Let's invert for better UX: slider value is "Focus".
+            // Actually, keep it simple. Val is Sigma. Smaller val = higher peak.
+            
+            const sigma = parseFloat(val);
+            const newData = diracChart.data.labels.map(x => gaussian(x, 0, sigma));
+            diracChart.data.datasets[0].data = newData;
+            diracChart.update();
+        }
+
+        // --- 7. TOPOLOGY (CANVAS) ---
+        const cTop = document.getElementById('canvasTopology');
+        const ctxTop = cTop.getContext('2d');
+        let node1 = {x: 100, y: 175};
+        let node2 = {x: 300, y: 175};
+        
+        function drawTopology() {
+            ctxTop.clearRect(0,0, cTop.width, cTop.height);
+            
+            // Calculate midpoint and distance
+            const midX = (node1.x + node2.x) / 2;
+            const midY = (node1.y + node2.y) / 2;
+            const dist = Math.sqrt(Math.pow(node2.x - node1.x, 2) + Math.pow(node2.y - node1.y, 2));
+            
+            // --- Draw Organic Blob (The Connected Space) ---
+            ctxTop.beginPath();
+            
+            // Dynamic thickness: thinner when stretched
+            // Base thickness 60, reduces as dist increases
+            const thickness = Math.max(30, 80 - dist * 0.15); 
+            
+            // Control points for the blob
+            // We draw a shape around node1 and node2
+            // Top curve
+            ctxTop.moveTo(node1.x, node1.y - thickness);
+            ctxTop.quadraticCurveTo(midX, midY - thickness * 0.5, node2.x, node2.y - thickness);
+            
+            // Right cap (around node2)
+            ctxTop.bezierCurveTo(
+                node2.x + thickness, node2.y - thickness, 
+                node2.x + thickness, node2.y + thickness, 
+                node2.x, node2.y + thickness
+            );
+            
+            // Bottom curve
+            ctxTop.quadraticCurveTo(midX, midY + thickness * 0.5, node1.x, node1.y + thickness);
+            
+            // Left cap (around node1)
+            ctxTop.bezierCurveTo(
+                node1.x - thickness, node1.y + thickness, 
+                node1.x - thickness, node1.y - thickness, 
+                node1.x, node1.y - thickness
+            );
+            
+            ctxTop.fillStyle = "rgba(79, 70, 229, 0.1)"; // Indigo tint
+            ctxTop.fill();
+            ctxTop.strokeStyle = "rgba(79, 70, 229, 0.3)";
+            ctxTop.lineWidth = 2;
+            ctxTop.stroke();
+
+            // Draw connection (Internal tension)
+            ctxTop.beginPath();
+            ctxTop.moveTo(node1.x, node1.y);
+            // Bezier curve to simulate elasticity
+            ctxTop.bezierCurveTo(
+                node1.x + 50, node1.y - 10, // Flattened curve
+                node2.x - 50, node2.y + 10, 
+                node2.x, node2.y
+            );
+            ctxTop.strokeStyle = "#4F46E5"; // Stronger indigo
+            ctxTop.lineWidth = 2;
+            ctxTop.setLineDash([5, 5]); // Dashed line for "relation"
+            ctxTop.stroke();
+            ctxTop.setLineDash([]);
+            
+            // Nodes
+            drawNode(node1, "我");
+            drawNode(node2, "知己");
+        }
+
+        function drawNode(node, text) {
+            ctxTop.beginPath();
+            ctxTop.arc(node.x, node.y, 10, 0, Math.PI*2);
+            ctxTop.fillStyle = "#1F2937";
+            ctxTop.fill();
+            ctxTop.font = "14px Noto Serif SC";
+            ctxTop.fillText(text, node.x - 10, node.y - 15);
+        }
+
+        function stretchTopology() {
+            // Animate pulling them apart
+            if(node2.x < 380) {
+                node1.x -= 2;
+                node2.x += 2;
+                node1.y += (Math.random()-0.5)*5; // Add noise/wobble
+                requestAnimationFrame(stretchTopology);
+                drawTopology();
+            } else {
+                // Reset
+                setTimeout(() => {
+                    node1.x = 100; node2.x = 300; node1.y = 175;
+                    drawTopology();
+                }, 1000);
+            }
+        }
+
+        // --- 8. CONVERGENCE (PLOTLY) ---
+        function initConvergence() {
+            const size = 100, x = new Array(size), y = new Array(size), z = new Array(size);
+            for(var i = 0; i < size; i++) {
+                x[i] = y[i] = -2 * Math.PI + 4 * Math.PI * i / size;
+                z[i] = new Array(size);
+            }
+            for(var i = 0; i < size; i++) {
+                for(var j = 0; j < size; j++) {
+                    var r2 = x[i]*x[i] + y[j]*y[j];
+                    z[i][j] = Math.sin(x[i]) * Math.cos(y[j]) * Math.sin(r2) / Math.log(r2+1);
+                }
+            }
+
+            var data = [{
+                z: z, x: x, y: y, type: 'contour', 
+                colorscale: 'Greys', 
+                showscale: false,
+                contours: {coloring: 'heatmap'}
+            }];
+            
+            // The "Searcher" point
+            var point = {
+                x: [4], y: [4], 
+                mode: 'markers', type: 'scatter',
+                marker: {size: 10, color: 'red'}
+            };
+
+            var layout = {
+                margin: {t:0,b:0,l:0,r:0},
+                paper_bgcolor: '#fff',
+                xaxis: {visible: false, range: [-7, 7]}, // Fixed range
+                yaxis: {visible: false, range: [-7, 7]}  // Fixed range
+            };
+
+            Plotly.newPlot('plotConvergence', data, layout, {staticPlot: false, displayModeBar: false});
+            Plotly.addTraces('plotConvergence', point);
+        }
+
+        function startSearch() {
+            const status = document.getElementById('search-status');
+            status.textContent = "搜索中...";
+            let step = 0;
+            
+            function stepSearch() {
+                if(step > 20) {
+                    status.textContent = "蓦然回首：已收敛至全局最优 (0,0)";
+                    // Final precise position
+                    Plotly.restyle('plotConvergence', {x: [[0]], y: [[0]]}, [1]);
+                    return;
+                }
+                
+                // Simulate moving towards 0,0 with reduced noise
+                const currentX = 4 * (1 - step/20);
+                const currentY = 4 * (1 - step/20);
+                
+                // Use restyle instead of animate for stable background
+                // Reduce noise to 0.2
+                Plotly.restyle('plotConvergence', {
+                    x: [[currentX + (Math.random()-0.5)*0.4]], 
+                    y: [[currentY + (Math.random()-0.5)*0.4]]
+                }, [1]);
+
+                step++;
+                // 100ms interval
+                setTimeout(stepSearch, 100);
+            }
+            stepSearch();
+        }
+
+        // --- 9. COIN TOSS (FINALE) ---
+        let coinCount = 0;
+        function tossCoin() {
+            const btn = document.getElementById('btnText');
+            const feedback = document.getElementById('coin-feedback');
+            
+            coinCount++;
+            
+            // Feedback Animation
+            feedback.style.top = '-50px';
+            feedback.style.opacity = '1';
+            
+            setTimeout(() => {
+                feedback.style.top = '-12px';
+                feedback.style.opacity = '0';
+            }, 800);
+
+            if(coinCount === 1) btn.textContent = "投币成功 (1)";
+            else if(coinCount > 1 && coinCount < 5) btn.textContent = `智慧 +${coinCount}`;
+            else if(coinCount === 5) btn.textContent = "下次一定？不存在的";
+            else btn.textContent = `EXISTENCE CONFIRMED (${coinCount})`;
+        }
+
+
+        // --- INITIALIZATION ---
+        window.addEventListener('load', () => {
+            initFourier();
+            initConv();
+            recursiveTree(cFractal.width/2, cFractal.height, 70, -90, 0); // Initial fractal
+            initComplex();
+            initVectors();
+            initDirac();
+            drawTopology();
+            initConvergence();
+        });
+
+    </script>
+</body>
+</html>

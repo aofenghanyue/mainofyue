@@ -489,7 +489,7 @@ footer {
 
 /* Ink Splash Effect - Advanced */
 .ink-drop {
-    position: absolute;
+    position: fixed;
     border-radius: 50%;
     transform: translate(-50%, -50%);
     pointer-events: none;
@@ -609,4 +609,19 @@ footer {
 html {
     scrollbar-width: none;
     -ms-overflow-style: none;
+}
+
+/* Link style for card back */
+.work-back a {
+    color: #fff;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255,255,255,0.5);
+    transition: color 0.3s, border-color 0.3s;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+.work-back a:hover {
+    color: var(--accent-red);
+    border-color: var(--accent-red);
 }
