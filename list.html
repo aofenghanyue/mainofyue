@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>所思所迹 | Ofyue</title>
+    <meta name="description" content="Ofyue的文稿合集——词话、阅微、格物、异想，所思所迹皆在此。">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <style>
+        /* Override bg for list page (no parallax panorama needed) */
+        body {
+            background-image:
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"),
+                linear-gradient(160deg, #edf3f8 0%, #f7f5ef 40%, #f5f0e8 100%);
+            background-size: auto, 100%;
+            background-repeat: repeat, no-repeat;
+            background-attachment: fixed;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SVG Filters -->
+    <svg style="position:absolute;width:0;height:0;pointer-events:none;" aria-hidden="true">
+        <defs>
+            <filter id="ink-spread-filter">
+                <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="3" result="noise" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="20" xChannelSelector="R"
+                    yChannelSelector="G" />
+                <feGaussianBlur stdDeviation="1" />
+            </filter>
+            <filter id="brush-edge" x="-20%" y="-20%" width="140%" height="140%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="3" result="noise" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+        </defs>
+    </svg>
+
+    <canvas id="ink-canvas" aria-hidden="true"></canvas>
+
+    <!-- Navigation -->
+    <nav class="ink-nav" id="main-nav">
+        <a href="index.html" class="nav-logo-link">
+            <span class="logo-text">Ofyue</span>
+            <span class="logo-seal">印</span>
+        </a>
+        <button class="nav-hamburger" id="nav-hamburger" aria-label="菜单">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="nav-links-list">
+            <li><a href="index.html">← 回草堂</a></li>
+            <li><a href="#poetry">词话</a></li>
+            <li><a href="#reading">阅微</a></li>
+            <li><a href="#tech">格物</a></li>
+            <li><a href="#whimsy">异想</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main -->
+    <main class="list-page-main">
+
+        <!-- Page header -->
+        <header class="list-page-header slide-up">
+            <h1>所 思 所 迹</h1>
+            <p>记录每一处思绪流经的印迹</p>
+            <!-- Decorative rule -->
+            <div style="display:flex;align-items:center;gap:1rem;margin-top:1.5rem;justify-content:center;">
+                <div style="height:1px;width:60px;background:linear-gradient(to right,transparent,var(--ink-light));">
+                </div>
+                <span style="color:var(--red);font-size:0.8rem;letter-spacing:0.2em;">WRITINGS</span>
+                <div style="height:1px;width:60px;background:linear-gradient(to left,transparent,var(--ink-light));">
+                </div>
+            </div>
+        </header>
+
+        <!-- ===== CATEGORY SECTIONS (rendered by JS from articles.json) ===== -->
+        <div id="categories-container">
+
+            <!-- 词话 Poetry -->
+            <section id="poetry" class="category-section">
+                <div class="category-header">
+                    <div class="category-icon">词</div>
+                    <div>
+                        <div class="category-title">词 话</div>
+                        <div class="category-desc">闲词几首 · 半纸功名 · 一窗风雨</div>
+                    </div>
+                </div>
+                <ul class="article-list" id="list-poetry">
+                    <div class="empty-state">
+                        暂无文章，待填坑&emsp;—&emsp;「半纸功名，一窗风雨」
+                    </div>
+                </ul>
+            </section>
+
+            <!-- 阅微 Reading -->
+            <section id="reading" class="category-section">
+                <div class="category-header">
+                    <div class="category-icon">阅</div>
+                    <div>
+                        <div class="category-title">阅 微</div>
+                        <div class="category-desc">开卷有得 · 好读书 · 不求甚解</div>
+                    </div>
+                </div>
+                <ul class="article-list" id="list-reading">
+                    <div class="empty-state">
+                        书山有路勤为径，但我还在找路&emsp;—&emsp;「每有会意，便欣然忘食」
+                    </div>
+                </ul>
+            </section>
+
+            <!-- 格物 Tech -->
+            <section id="tech" class="category-section">
+                <div class="category-header">
+                    <div class="category-icon">格</div>
+                    <div>
+                        <div class="category-title">格 物</div>
+                        <div class="category-desc">技术探究 · 致知在格物</div>
+                    </div>
+                </div>
+                <ul class="article-list" id="list-tech">
+                    <div class="empty-state">
+                        代码都在 GitHub，这里只有 bug 记录&emsp;—&emsp;「代码构建世界，逻辑编织未来」
+                    </div>
+                </ul>
+            </section>
+
+            <!-- 异想 Whimsy -->
+            <section id="whimsy" class="category-section">
+                <div class="category-header">
+                    <div class="category-icon">异</div>
+                    <div>
+                        <div class="category-title">异 想</div>
+                        <div class="category-desc">天马行空 · 庄周梦蝶 · 荒诞不经</div>
+                    </div>
+                </div>
+                <ul class="article-list" id="list-whimsy">
+                    <!-- Populated by JS -->
+                    <div class="empty-state" id="empty-whimsy" style="display:none;">
+                        记录每一个荒诞不经的脑洞&emsp;—&emsp;「庄周梦蝶，不知虚实」
+                    </div>
+                </ul>
+            </section>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-quote">
+                <span class="footer-quote-text">" 我 即 作 品 "</span>
+            </div>
+            <div class="footer-links">
+                <a href="index.html">回草堂</a>
+                <span class="footer-sep">·</span>
+                <a href="https://github.com/aofenghanyue" target="_blank" rel="noopener">GitHub</a>
+                <span class="footer-sep">·</span>
+                <a href="mailto:1772155440@qq.com">Email</a>
+            </div>
+            <p class="footer-copy">&copy; 2026 Ofyue. All Rights Reserved. <span class="seal">ofyue印</span></p>
+        </div>
+    </footer>
+
+    <script src="assets/js/script.js"></script>
+    <script>
+        // Nav behavior
+        const burger = document.getElementById('nav-hamburger');
+        const navList = document.getElementById('nav-links-list');
+        const nav = document.getElementById('main-nav');
+        burger.addEventListener('click', () => {
+            navList.classList.toggle('nav-open');
+            burger.classList.toggle('is-active');
+        });
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('nav-scrolled', window.scrollY > 60);
+        }, { passive: true });
+        document.querySelectorAll('.nav-links a').forEach(btn => {
+            btn.addEventListener('mousemove', e => {
+                const r = btn.getBoundingClientRect();
+                btn.style.setProperty('--x', (e.clientX - r.left) + 'px');
+                btn.style.setProperty('--y', (e.clientY - r.top) + 'px');
+            });
+        });
+
+        // ---- Load articles from JSON and render ----
+        const CATEGORY_MAP = {
+            poetry: 'list-poetry',
+            reading: 'list-reading',
+            tech: 'list-tech',
+            whimsy: 'list-whimsy',
+        };
+
+        function formatDate(dateStr) {
+            const d = new Date(dateStr);
+            return `${d.getFullYear()}年${String(d.getMonth() + 1).padStart(2, '0')}月${String(d.getDate()).padStart(2, '0')}日`;
+        }
+
+        function renderArticle(article) {
+            const tagsHtml = (article.tags || [])
+                .slice(0, 3)
+                .map(t => `<span class="tag">${t}</span>`)
+                .join('');
+
+            return `
+      <li class="article-item">
+        <a href="${article.path}" class="article-link">
+          <div>
+            <div class="article-title">${article.title}</div>
+            ${article.subtitle ? `<div class="article-subtitle">${article.subtitle}</div>` : ''}
+          </div>
+        </a>
+        <div class="article-meta">
+          <div class="article-tags">${tagsHtml}</div>
+          <span class="article-date">${formatDate(article.date)}</span>
+        </div>
+      </li>`;
+        }
+
+        async function loadArticles() {
+            try {
+                const res = await fetch('data/articles.json');
+                const data = await res.json();
+                const byCategory = {};
+
+                data.articles.forEach(art => {
+                    if (!byCategory[art.category]) byCategory[art.category] = [];
+                    byCategory[art.category].push(art);
+                });
+
+                Object.entries(CATEGORY_MAP).forEach(([cat, listId]) => {
+                    const listEl = document.getElementById(listId);
+                    if (!listEl) return;
+                    const articles = byCategory[cat] || [];
+                    if (articles.length === 0) return; // Keep empty state
+
+                    // Clear existing empty-state placeholder
+                    listEl.innerHTML = '';
+                    // Sort newest first
+                    articles.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    listEl.innerHTML = articles.map(renderArticle).join('');
+                });
+
+            } catch (e) {
+                // fetch fails when opened via file:// — that's OK, show static data
+                console.warn('Could not load articles.json (probably file:// protocol). Static placeholders shown.', e);
+                // Manually add whimsy article as fallback
+                const whimsy = document.getElementById('list-whimsy');
+                if (whimsy) {
+                    whimsy.innerHTML = `
+          <li class="article-item">
+            <a href="articles/荒诞不羁/数学哲学.html" class="article-link">
+              <div>
+                <div class="article-title">新古文观止 · 数理哲学篇</div>
+                <div class="article-subtitle">分析学与时间观</div>
+              </div>
+            </a>
+            <div class="article-meta">
+              <div class="article-tags">
+                <span class="tag">数学</span>
+                <span class="tag">哲学</span>
+                <span class="tag">古文</span>
+              </div>
+              <span class="article-date">2026年02月05日</span>
+            </div>
+          </li>`;
+                }
+            }
+
+            // Animate category sections
+            const sections = document.querySelectorAll('.category-section');
+            const obs = new IntersectionObserver((entries) => {
+                entries.forEach((entry, i) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.classList.add('visible');
+                        }, i * 100);
+                        obs.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.05 });
+            sections.forEach(s => obs.observe(s));
+        }
+
+        loadArticles();
+    </script>
+</body>
+
+</html>
