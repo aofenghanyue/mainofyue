@@ -8,7 +8,13 @@
   <meta name="description" content="Ofyue的个人站点——词话、阅微、格物、异想，记录所思所迹。">
   <link rel="stylesheet" href="assets/css/style.css">
 
-  <!-- Preconnect for Google Fonts -->
+  <!-- AOS — Animate On Scroll -->
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
+
+  <!-- Phosphor Icons (lightweight icon set) -->
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
+
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 </head>
@@ -63,9 +69,9 @@
 
     <!-- §§ HERO §§ -->
     <section id="home" class="hero-section">
-      <div class="hero-eyebrow">Personal Space of Ofyue</div>
+      <div class="hero-eyebrow" data-aos="fade-down" data-aos-delay="200">Personal Space of Ofyue</div>
       <h1 class="ink-title">怎么可能</h1>
-      <p class="hero-subtitle">
+      <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="600">
         " 世人笑我太疯癫，我笑代码写不完。"
       </p>
 
@@ -84,7 +90,7 @@
 
     <!-- §§ ABOUT §§ -->
     <section id="about" class="section-container">
-      <div class="ink-card slide-up" style="max-width:680px;">
+      <div class="ink-card" style="max-width:680px;" data-aos="fade-up">
         <h2>关 于 我</h2>
         <div class="divider-ink"></div>
         <div class="about-content">
@@ -102,7 +108,7 @@
 
     <!-- §§ WORKS §§ -->
     <section id="works" class="section-container">
-      <div class="ink-card slide-up" style="max-width:960px;">
+      <div class="ink-card" style="max-width:960px;" data-aos="fade-up">
         <h2>所 思 所 迹</h2>
         <div class="divider-ink"></div>
         <p
@@ -113,7 +119,7 @@
         <div class="works-container">
 
           <!-- 词话 -->
-          <div class="work-card">
+          <div class="work-card" data-aos="zoom-in" data-aos-delay="0">
             <div class="work-inner">
               <div class="work-front">
                 <span class="vertical-text">词话</span>
@@ -130,7 +136,7 @@
           </div>
 
           <!-- 阅微 -->
-          <div class="work-card">
+          <div class="work-card" data-aos="zoom-in" data-aos-delay="80">
             <div class="work-inner">
               <div class="work-front">
                 <span class="vertical-text">阅微</span>
@@ -147,7 +153,7 @@
           </div>
 
           <!-- 格物 -->
-          <div class="work-card">
+          <div class="work-card" data-aos="zoom-in" data-aos-delay="160">
             <div class="work-inner">
               <div class="work-front">
                 <span class="vertical-text">格物</span>
@@ -164,7 +170,7 @@
           </div>
 
           <!-- 异想 -->
-          <div class="work-card">
+          <div class="work-card" data-aos="zoom-in" data-aos-delay="240">
             <div class="work-inner">
               <div class="work-front">
                 <span class="vertical-text">异想</span>
@@ -186,7 +192,7 @@
 
     <!-- §§ CONTACT §§ -->
     <section id="contact" class="section-container">
-      <div class="ink-card slide-up" style="max-width:620px;">
+      <div class="ink-card" style="max-width:620px;" data-aos="fade-up">
         <h2>鸿 雁 传 书</h2>
         <div class="divider-ink"></div>
         <p class="contact-lead">" <strong style="color:var(--ink);">谁在呼叫舰队？</strong> "</p>
@@ -218,15 +224,30 @@
   </footer>
 
   <script src="assets/js/script.js"></script>
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
   <script>
-    // Hamburger toggle (inline for index.html where components.js isn't needed)
+    // Hamburger toggle
     const burger = document.getElementById('nav-hamburger');
     const navList = document.getElementById('nav-links-list');
     const nav = document.getElementById('main-nav');
 
     burger.addEventListener('click', () => {
-      navList.classList.toggle('nav-open');
-      burger.classList.toggle('is-active');
+      const isOpen = navList.classList.toggle('nav-open');
+      burger.classList.toggle('is-active', isOpen);
+      // Toggle nav-menu-open so CSS can turn logo white
+      nav.classList.toggle('nav-menu-open', isOpen);
+      // Prevent body scroll when overlay is open
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    });
+
+    // Close overlay when a link is clicked
+    navList.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        navList.classList.remove('nav-open');
+        burger.classList.remove('is-active');
+        nav.classList.remove('nav-menu-open');
+        document.body.style.overflow = '';
+      });
     });
 
     // Nav shrink on scroll
@@ -234,7 +255,7 @@
       nav.classList.toggle('nav-scrolled', window.scrollY > 60);
     }, { passive: true });
 
-    // Ink follow on nav links
+    // Ink follow on nav links (desktop only)
     document.querySelectorAll('.nav-links a').forEach(btn => {
       btn.addEventListener('mousemove', e => {
         const r = btn.getBoundingClientRect();
@@ -252,24 +273,24 @@
     });
 
     // ---- Touch / Click flip for work-cards ----
-    // On mobile (≤640px), hover doesn't fire; instead we toggle a .flipped class on tap.
-    // The card's back-side link still works because the click target check ignores
-    // link elements (they jump normally).
     document.querySelectorAll('.work-card').forEach(card => {
       card.addEventListener('click', e => {
-        // If on a wide screen, CSS hover handles it — skip JS
         if (window.innerWidth > 640) return;
-        // If the user tapped the back-side link, let it navigate normally
         if (e.target.closest('a')) return;
-        // Toggle flip
         const isFlipped = card.classList.contains('flipped');
-        // Close any other open card first
         document.querySelectorAll('.work-card.flipped').forEach(c => c.classList.remove('flipped'));
         if (!isFlipped) card.classList.add('flipped');
       });
     });
 
-  </script>
+    // ---- Init AOS ----
+    AOS.init({
+      duration: 800,
+      easing: 'ease-out-cubic',
+      once: true,       // animate only once as element scrolls in
+      offset: 60,       // trigger 60px before element enters viewport
+      disable: false,
+    });  </script>
 </body>
 
 </html>

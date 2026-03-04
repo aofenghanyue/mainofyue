@@ -1098,79 +1098,202 @@ body {
 /* ============================================================
    RESPONSIVE
    ============================================================ */
+
+/* --- Tablet (≤ 900px) --- */
 @media (max-width: 900px) {
   .works-container {
     grid-template-columns: repeat(2, 1fr);
+    gap: 1.4rem;
   }
 }
 
+/* --- Mobile (≤ 640px) --- */
 @media (max-width: 640px) {
+
+  /* ---- Full-Screen Nav Overlay ---- */
   .nav-links {
+    /* Cover the entire viewport */
     position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 70vw;
-    max-width: 280px;
-    background: rgba(247, 245, 239, 0.97);
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(20, 18, 14, 0.96);
     backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    /* Centered layout */
+    display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    padding: 5rem 2rem 2rem;
+    align-items: center;
+    justify-content: center;
     gap: 0;
-    transform: translateX(100%);
-    transition: transform var(--dur-mid) var(--ease-ink);
-    box-shadow: -8px 0 30px rgba(0, 0, 0, 0.1);
+    list-style: none;
+    padding: 0;
+
+    /* Hidden state */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
     z-index: 490;
+
+    /* No slide transform — just fade */
+    transform: none;
+    box-shadow: none;
   }
 
   .nav-links.nav-open {
-    transform: translateX(0);
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  /* Stagger each link in via CSS animation when open */
+  .nav-links.nav-open li:nth-child(1) {
+    animation: navItemIn 0.4s 0.05s both;
+  }
+
+  .nav-links.nav-open li:nth-child(2) {
+    animation: navItemIn 0.4s 0.12s both;
+  }
+
+  .nav-links.nav-open li:nth-child(3) {
+    animation: navItemIn 0.4s 0.19s both;
+  }
+
+  .nav-links.nav-open li:nth-child(4) {
+    animation: navItemIn 0.4s 0.26s both;
+  }
+
+  .nav-links.nav-open li:nth-child(5) {
+    animation: navItemIn 0.4s 0.33s both;
+  }
+
+  @keyframes navItemIn {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .nav-links li {
-    width: 100%;
+    width: auto;
+    text-align: center;
   }
 
+  /* Large centered Kaiti links */
   .nav-links a {
     display: block;
-    padding: 1rem 1.5rem;
-    font-size: 1.1rem;
+    padding: 0.85rem 2.5rem;
+    font-size: 1.7rem;
+    font-family: var(--font-kai);
+    letter-spacing: 0.25em;
+    color: rgba(255, 255, 255, 0.88);
     border-radius: 0;
+    border: none;
+    position: relative;
+    transition: color 0.2s, letter-spacing 0.3s;
   }
 
   .nav-links a::before {
+    /* Remove the ink-border pseudo-element on mobile overlay */
     display: none;
   }
 
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: 0.6rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 1px;
+    background: var(--gold);
+    transition: width 0.3s ease;
+  }
+
+  .nav-links a:hover,
+  .nav-links a:focus {
+    color: var(--gold);
+    background: none;
+    letter-spacing: 0.3em;
+  }
+
+  .nav-links a:hover::after {
+    width: 40%;
+  }
+
+  /* A small decorative divider between logo and links */
+  .nav-links li:first-child {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin-top: 4rem;
+    padding-top: 1rem;
+  }
+
+  /* Show hamburger on mobile */
   .nav-hamburger {
     display: flex;
+    z-index: 600;
+    position: relative;
   }
 
+  /* When nav is open, hamburger bars become white × */
+  .nav-hamburger.is-active span {
+    background: #fff;
+  }
+
+  /* Ensure logo stays on top of the overlay */
+  .nav-logo-link {
+    position: relative;
+    z-index: 600;
+  }
+
+  /* Logo text turns white when overlay is open */
+  .ink-nav.nav-menu-open .logo-text {
+    color: #fff;
+  }
+
+  /* ---- Hero ---- */
   .ink-title {
-    font-size: 3rem;
+    font-size: clamp(2.6rem, 12vw, 3.8rem);
   }
 
+  .hero-subtitle {
+    font-size: 0.95rem;
+    padding: 0 0.5rem;
+  }
+
+  .hero-eyebrow {
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+  }
+
+  /* ---- Sections ---- */
   .section-container {
-    padding: 5rem 5%;
+    padding: 4.5rem 4% 3rem;
+    min-height: unset;
   }
 
   .ink-card {
-    padding: 2rem 1.5rem;
+    padding: 1.8rem 1.2rem;
   }
 
+  /* ---- Works cards ---- */
   .works-container {
     grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
+    gap: 0.9rem;
   }
 
-  /* 手机上卡片用自动高度，防止文字溢出 */
+  /* Auto-height to prevent overflow */
   .work-card {
     height: auto;
-    min-height: 200px;
+    min-height: 180px;
   }
 
-  /* 手机上正背面都改为 static，用 JS class 切换显示 */
+  /* On mobile: disable 3D flip, use JS .flipped class instead */
   .work-inner {
     transform-style: flat;
     transition: none;
@@ -1185,55 +1308,93 @@ body {
     width: 100%;
   }
 
-  /* 默认显示正面，隐藏背面 */
   .work-back {
     display: none;
   }
 
-  /* 点击后翻转：隐藏正面，显示背面 */
   .work-card.flipped .work-front {
     display: none;
   }
 
   .work-card.flipped .work-back {
     display: flex;
-    min-height: 200px;
-    padding: 1.5rem 1rem;
+    min-height: 180px;
+    padding: 1.2rem 0.8rem;
   }
 
-  /* 背面文字在手机上缩小 */
   .work-back h3 {
-    font-size: 1.1rem;
+    font-size: 1rem;
   }
 
   .work-back p {
-    font-size: 0.82rem;
+    font-size: 0.8rem;
+    line-height: 1.6;
   }
 
   .work-back a {
-    font-size: 0.78rem;
-    padding: 4px 12px;
+    font-size: 0.76rem;
+    padding: 4px 10px;
+    margin-top: 0.5rem !important;
   }
 
-  /* 手机上 spacer 不撑开，否则内容会分散导致溢出 */
   .work-back .spacer {
     flex: 0;
-    height: 0.5rem;
+    height: 0.4rem;
   }
 
-  .article-meta {
-    display: none;
+  /* Vertical text slightly smaller */
+  .vertical-text {
+    font-size: 2rem;
+    letter-spacing: 0.3rem;
   }
 
+  /* ---- About section punch ---- */
+  .lead-text {
+    font-size: 1rem;
+    line-height: 2;
+  }
+
+  .punchline {
+    font-size: 1.3rem;
+  }
+
+  /* ---- Article list ---- */
   .article-item {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.3rem;
   }
+
+  .article-meta {
+    margin-left: 1.4rem;
+    /* align with link arrow indent */
+  }
+
+  .article-date {
+    display: none;
+    /* save space, keep tags */
+  }
+
+  /* ---- Category section ---- */
+  .category-header {
+    gap: 0.8rem;
+  }
+
+  .category-icon {
+    font-size: 2rem;
+    width: 52px;
+    height: 52px;
+  }
 }
 
-@media (max-width: 400px) {
+/* --- Very narrow phones (≤ 380px) --- */
+@media (max-width: 380px) {
   .works-container {
     grid-template-columns: 1fr 1fr;
+    gap: 0.7rem;
+  }
+
+  .ink-title {
+    font-size: 2.4rem;
   }
 }

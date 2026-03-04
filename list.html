@@ -7,11 +7,14 @@
     <title>所思所迹 | Ofyue</title>
     <meta name="description" content="Ofyue的文稿合集——词话、阅微、格物、异想，所思所迹皆在此。">
     <link rel="stylesheet" href="assets/css/style.css">
+    <!-- AOS -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <style>
-        /* Override bg for list page (no parallax panorama needed) */
         body {
             background-image:
                 url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"),
@@ -65,7 +68,7 @@
     <main class="list-page-main">
 
         <!-- Page header -->
-        <header class="list-page-header slide-up">
+        <header class="list-page-header" data-aos="fade-up">
             <h1>所 思 所 迹</h1>
             <p>记录每一处思绪流经的印迹</p>
             <!-- Decorative rule -->
@@ -168,15 +171,30 @@
     </footer>
 
     <script src="assets/js/script.js"></script>
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
     <script>
         // Nav behavior
         const burger = document.getElementById('nav-hamburger');
         const navList = document.getElementById('nav-links-list');
         const nav = document.getElementById('main-nav');
+
         burger.addEventListener('click', () => {
-            navList.classList.toggle('nav-open');
-            burger.classList.toggle('is-active');
+            const isOpen = navList.classList.toggle('nav-open');
+            burger.classList.toggle('is-active', isOpen);
+            nav.classList.toggle('nav-menu-open', isOpen);
+            document.body.style.overflow = isOpen ? 'hidden' : '';
         });
+
+        // Close overlay when a link is clicked
+        navList.querySelectorAll('a').forEach(a => {
+            a.addEventListener('click', () => {
+                navList.classList.remove('nav-open');
+                burger.classList.remove('is-active');
+                nav.classList.remove('nav-menu-open');
+                document.body.style.overflow = '';
+            });
+        });
+
         window.addEventListener('scroll', () => {
             nav.classList.toggle('nav-scrolled', window.scrollY > 60);
         }, { passive: true });
@@ -187,6 +205,8 @@
                 btn.style.setProperty('--y', (e.clientY - r.top) + 'px');
             });
         });
+
+        AOS.init({ duration: 750, easing: 'ease-out-cubic', once: true, offset: 50 });
 
         // ---- Load articles from JSON and render ----
         const CATEGORY_MAP = {
