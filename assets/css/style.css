@@ -460,13 +460,15 @@ body {
 }
 
 .ink-card {
-  background: rgba(252, 250, 235, 0.92);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  /* NOTE: backdrop-filter is intentionally NOT set here.
+     It breaks transform-style:preserve-3d on children (Chromium bug)
+     causing flipped card text to appear mirrored. Use solid bg instead. */
+  background: rgba(252, 250, 235, 0.97);
   border-radius: var(--radius);
   padding: 3.5rem;
-  box-shadow: var(--shadow-md);
-  border: 1px solid rgba(28, 28, 28, 0.04);
+  box-shadow: var(--shadow-md),
+    0 0 0 1px rgba(28, 28, 28, 0.04);
+  border: 1px solid rgba(28, 28, 28, 0.05);
   margin: 2rem auto;
   max-width: 820px;
   width: 100%;
@@ -679,8 +681,8 @@ body {
   transform: rotateY(180deg);
   text-align: center;
   gap: 0.5rem;
-  overflow: hidden;
-  /* 防止内容溢出卡片 */
+  /* DO NOT add overflow:hidden — it creates a stacking context
+     that breaks preserve-3d and causes mirrored text. */
   justify-content: center;
 }
 
@@ -1111,18 +1113,18 @@ body {
 @media (max-width: 640px) {
 
   /* ---- Full-Screen Nav Overlay ---- */
+  /* Hidden by default */
   .nav-links {
-    /* Cover the entire viewport */
+    display: none;
     position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(20, 18, 14, 0.96);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    /* Dark ink wash — no backdrop-filter here (performance + z-index issues) */
+    background: rgba(18, 16, 12, 0.97);
 
-    /* Centered layout */
-    display: flex;
+    /* Centered column */
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -1130,47 +1132,53 @@ body {
     list-style: none;
     padding: 0;
 
-    /* Hidden state */
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.35s ease;
-    z-index: 490;
-
-    /* No slide transform — just fade */
+    /* Above everything */
+    z-index: 9000;
     transform: none;
     box-shadow: none;
   }
 
+  /* Shown when JS adds .nav-open */
   .nav-links.nav-open {
-    opacity: 1;
-    pointer-events: all;
+    display: flex;
+    animation: overlayFadeIn 0.3s ease both;
   }
 
-  /* Stagger each link in via CSS animation when open */
+  @keyframes overlayFadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Link stagger — only when overlay was just opened */
   .nav-links.nav-open li:nth-child(1) {
-    animation: navItemIn 0.4s 0.05s both;
+    animation: navItemIn 0.4s 0.06s both;
   }
 
   .nav-links.nav-open li:nth-child(2) {
-    animation: navItemIn 0.4s 0.12s both;
+    animation: navItemIn 0.4s 0.13s both;
   }
 
   .nav-links.nav-open li:nth-child(3) {
-    animation: navItemIn 0.4s 0.19s both;
+    animation: navItemIn 0.4s 0.20s both;
   }
 
   .nav-links.nav-open li:nth-child(4) {
-    animation: navItemIn 0.4s 0.26s both;
+    animation: navItemIn 0.4s 0.27s both;
   }
 
   .nav-links.nav-open li:nth-child(5) {
-    animation: navItemIn 0.4s 0.33s both;
+    animation: navItemIn 0.4s 0.34s both;
   }
 
   @keyframes navItemIn {
     from {
       opacity: 0;
-      transform: translateY(18px);
+      transform: translateY(20px);
     }
 
     to {
@@ -1180,7 +1188,7 @@ body {
   }
 
   .nav-links li {
-    width: auto;
+    width: 100%;
     text-align: center;
   }
 
@@ -1191,7 +1199,9 @@ body {
     font-size: 1.7rem;
     font-family: var(--font-kai);
     letter-spacing: 0.25em;
-    color: rgba(255, 255, 255, 0.88);
+    /* Force white — dark overlay bg may inherit other colours */
+    color: rgba(255, 255, 255, 0.88) !important;
+    background: transparent !important;
     border-radius: 0;
     border: none;
     position: relative;
@@ -1236,7 +1246,8 @@ body {
   /* Show hamburger on mobile */
   .nav-hamburger {
     display: flex;
-    z-index: 600;
+    z-index: 9001;
+    /* above the 9000 overlay */
     position: relative;
   }
 
@@ -1248,7 +1259,15 @@ body {
   /* Ensure logo stays on top of the overlay */
   .nav-logo-link {
     position: relative;
-    z-index: 600;
+    z-index: 9001;
+    /* above the 9000 overlay */
+  }
+
+  /* When menu is open, the nav bar itself needs to be above the overlay
+     so logo + hamburger are visible and clickable */
+  .ink-nav.nav-menu-open {
+    z-index: 9001;
+    background: transparent;
   }
 
   /* Logo text turns white when overlay is open */
