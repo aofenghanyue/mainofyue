@@ -604,7 +604,8 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
-.work-card:hover .work-inner {
+.work-card:hover .work-inner,
+.work-card.flipped .work-inner {
   transform: rotateY(180deg);
 }
 
@@ -678,6 +679,9 @@ body {
   transform: rotateY(180deg);
   text-align: center;
   gap: 0.5rem;
+  overflow: hidden;
+  /* 防止内容溢出卡片 */
+  justify-content: center;
 }
 
 .work-back h3 {
@@ -1160,8 +1164,61 @@ body {
     gap: 1rem;
   }
 
+  /* 手机上卡片用自动高度，防止文字溢出 */
   .work-card {
-    height: 240px;
+    height: auto;
+    min-height: 200px;
+  }
+
+  /* 手机上正背面都改为 static，用 JS class 切换显示 */
+  .work-inner {
+    transform-style: flat;
+    transition: none;
+  }
+
+  .work-front,
+  .work-back {
+    position: static;
+    backface-visibility: visible;
+    -webkit-backface-visibility: visible;
+    transform: none;
+    width: 100%;
+  }
+
+  /* 默认显示正面，隐藏背面 */
+  .work-back {
+    display: none;
+  }
+
+  /* 点击后翻转：隐藏正面，显示背面 */
+  .work-card.flipped .work-front {
+    display: none;
+  }
+
+  .work-card.flipped .work-back {
+    display: flex;
+    min-height: 200px;
+    padding: 1.5rem 1rem;
+  }
+
+  /* 背面文字在手机上缩小 */
+  .work-back h3 {
+    font-size: 1.1rem;
+  }
+
+  .work-back p {
+    font-size: 0.82rem;
+  }
+
+  .work-back a {
+    font-size: 0.78rem;
+    padding: 4px 12px;
+  }
+
+  /* 手机上 spacer 不撑开，否则内容会分散导致溢出 */
+  .work-back .spacer {
+    flex: 0;
+    height: 0.5rem;
   }
 
   .article-meta {
