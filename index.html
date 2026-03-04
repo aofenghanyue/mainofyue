@@ -108,81 +108,72 @@
 
     <!-- §§ WORKS §§ -->
     <section id="works" class="section-container">
-      <div class="ink-card" style="max-width:960px;" data-aos="fade-up">
+      <div class="ink-card" style="max-width:960px;">
         <h2>所 思 所 迹</h2>
         <div class="divider-ink"></div>
-        <p
-          style="text-align:center;color:var(--ink-light);margin-bottom:2.5rem;font-size:0.95rem;letter-spacing:0.2em;">
-          " 我 即 作 品 "
+        <p style="text-align:center;color:var(--ink-light);margin-bottom:2rem;font-size:0.88rem;letter-spacing:0.25em;">
+          词 话 &ensp;·&ensp; 阅 微 &ensp;·&ensp; 格 物 &ensp;·&ensp; 异 想
         </p>
 
         <div class="works-container">
 
           <!-- 词话 -->
-          <div class="work-card" data-aos="zoom-in" data-aos-delay="0">
-            <div class="work-inner">
-              <div class="work-front">
-                <span class="vertical-text">词话</span>
-                <div class="ink-decoration seal-ao"></div>
-              </div>
-              <div class="work-back">
-                <h3>闲词几首</h3>
-                <p>半纸功名<br>一窗风雨</p>
-                <div class="spacer"></div>
-                <p>写点无病呻吟<br>记点人间烟火</p>
-                <a href="list.html#poetry" style="margin-top:1rem;">&gt;&gt; 进入词话</a>
-              </div>
+          <div class="work-card">
+            <div class="work-front">
+              <span class="vertical-text">词话</span>
+              <div class="ink-decoration seal-ao"></div>
+            </div>
+            <div class="work-overlay">
+              <h3>闲词几首</h3>
+              <p>半纸功名<br>一窗风雨</p>
+              <div class="spacer"></div>
+              <p>写点无病呻吟<br>记点人间烟火</p>
+              <a href="list.html#poetry">&gt;&gt; 进入词话</a>
             </div>
           </div>
 
           <!-- 阅微 -->
-          <div class="work-card" data-aos="zoom-in" data-aos-delay="80">
-            <div class="work-inner">
-              <div class="work-front">
-                <span class="vertical-text">阅微</span>
-                <div class="ink-decoration seal-feng"></div>
-              </div>
-              <div class="work-back">
-                <h3>开卷有得</h3>
-                <p>好读书<br>不求甚解</p>
-                <div class="spacer"></div>
-                <p>每有会意<br>便欣然忘食</p>
-                <a href="list.html#reading" style="margin-top:1rem;">&gt;&gt; 进入阅微</a>
-              </div>
+          <div class="work-card">
+            <div class="work-front">
+              <span class="vertical-text">阅微</span>
+              <div class="ink-decoration seal-feng"></div>
+            </div>
+            <div class="work-overlay">
+              <h3>开卷有得</h3>
+              <p>好读书<br>不求甚解</p>
+              <div class="spacer"></div>
+              <p>每有会意<br>便欣然忘食</p>
+              <a href="list.html#reading">&gt;&gt; 进入阅微</a>
             </div>
           </div>
 
           <!-- 格物 -->
-          <div class="work-card" data-aos="zoom-in" data-aos-delay="160">
-            <div class="work-inner">
-              <div class="work-front">
-                <span class="vertical-text">格物</span>
-                <div class="ink-decoration seal-han"></div>
-              </div>
-              <div class="work-back">
-                <h3>技术探究</h3>
-                <p>致知<br>在格物</p>
-                <div class="spacer"></div>
-                <p>代码构建世界<br>逻辑编织未来</p>
-                <a href="list.html#tech" style="margin-top:1rem;">&gt;&gt; 进入格物</a>
-              </div>
+          <div class="work-card">
+            <div class="work-front">
+              <span class="vertical-text">格物</span>
+              <div class="ink-decoration seal-han"></div>
+            </div>
+            <div class="work-overlay">
+              <h3>技术探究</h3>
+              <p>致知<br>在格物</p>
+              <div class="spacer"></div>
+              <p>代码构建世界<br>逻辑编织未来</p>
+              <a href="list.html#tech">&gt;&gt; 进入格物</a>
             </div>
           </div>
 
           <!-- 异想 -->
-          <div class="work-card" data-aos="zoom-in" data-aos-delay="240">
-            <div class="work-inner">
-              <div class="work-front">
-                <span class="vertical-text">异想</span>
-                <div class="ink-decoration seal-yue"></div>
-              </div>
-              <div class="work-back">
-                <h3>天马行空</h3>
-                <p>庄周梦蝶<br>不知虚实</p>
-                <div class="spacer"></div>
-                <p>记录每一个<br>荒诞不经的脑洞</p>
-                <a href="list.html#whimsy" style="margin-top:1rem;">&gt;&gt; 进入异想</a>
-              </div>
+          <div class="work-card">
+            <div class="work-front">
+              <span class="vertical-text">异想</span>
+              <div class="ink-decoration seal-yue"></div>
+            </div>
+            <div class="work-overlay">
+              <h3>天马行空</h3>
+              <p>庄周梦蝶<br>不知虚实</p>
+              <div class="spacer"></div>
+              <p>记录每一个<br>荒诞不经的脑洞</p>
+              <a href="list.html#whimsy">&gt;&gt; 进入异想</a>
             </div>
           </div>
 
@@ -272,14 +263,15 @@
       });
     });
 
-    // ---- Touch / Click flip for work-cards ----
+    // ---- Mobile tap: show/hide overlay on work-cards ----
+    // On desktop CSS :hover handles it. On mobile we toggle .active.
     document.querySelectorAll('.work-card').forEach(card => {
       card.addEventListener('click', e => {
-        if (window.innerWidth > 640) return;
-        if (e.target.closest('a')) return;
-        const isFlipped = card.classList.contains('flipped');
-        document.querySelectorAll('.work-card.flipped').forEach(c => c.classList.remove('flipped'));
-        if (!isFlipped) card.classList.add('flipped');
+        if (window.innerWidth > 640) return;   // desktop: CSS hover
+        if (e.target.closest('a')) return;     // let links navigate
+        const isActive = card.classList.contains('active');
+        document.querySelectorAll('.work-card.active').forEach(c => c.classList.remove('active'));
+        if (!isActive) card.classList.add('active');
       });
     });
 

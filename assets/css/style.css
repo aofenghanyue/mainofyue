@@ -580,59 +580,56 @@ body {
 }
 
 /* ============================================================
-   WORKS / 所思所迹 — Flip Cards
+   WORKS / 所思所迹 — Overlay Slide Cards (NO 3D flip)
    ============================================================ */
 .works-container {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1.8rem;
-  perspective: 1200px;
+  gap: 1.4rem;
   margin-top: 1rem;
 }
 
 .work-card {
-  height: 300px;
-  perspective: 1200px;
-  cursor: pointer;
-}
-
-.work-inner {
+  height: 280px;
+  /* fixed — same height at all times */
   position: relative;
-  width: 100%;
-  height: 100%;
-  transition: transform 0.85s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  transform-style: preserve-3d;
+  overflow: hidden;
+  /* clip the overlay as it slides in */
   border-radius: var(--radius);
   box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  border: 1px solid rgba(28, 28, 28, 0.06);
+  transition: box-shadow var(--dur-mid) var(--ease-ink),
+    transform var(--dur-mid) var(--ease-ink);
 }
 
-.work-card:hover .work-inner,
-.work-card.flipped .work-inner {
-  transform: rotateY(180deg);
+.work-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
 }
 
-.work-front,
-.work-back {
+/* Front face */
+.work-front {
   position: absolute;
   inset: 0;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 1.5rem;
-  border-radius: var(--radius);
-  border: 1px solid rgba(28, 28, 28, 0.06);
-}
-
-.work-front {
   background: #faf9de;
   background-image:
     radial-gradient(circle at 88% 8%, rgba(0, 0, 0, 0.03) 0%, transparent 22%),
     radial-gradient(circle at 12% 88%, rgba(0, 0, 0, 0.02) 0%, transparent 22%);
+  transition: opacity 0.3s ease;
+  padding: 1.5rem;
 }
 
+.work-card:hover .work-front,
+.work-card.active .work-front {
+  opacity: 0;
+}
+
+/* Vertical kaiti text + border box */
 .vertical-text {
   writing-mode: vertical-rl;
   text-orientation: upright;
@@ -650,9 +647,10 @@ body {
   box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.12);
 }
 
+/* Red seal decoration (bottom of front) */
 .ink-decoration {
   position: absolute;
-  bottom: 16px;
+  bottom: 14px;
   width: 36px;
   height: 36px;
   background-size: contain;
@@ -675,51 +673,68 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='2' y='2' width='96' height='96' rx='8' fill='%23b22222'/%3E%3Ctext x='50' y='82' font-size='70' text-anchor='middle' fill='rgba(255,255,255,0.88)' font-family='KaiTi,STKaiti,serif' font-weight='bold'%3E月%3C/text%3E%3C/svg%3E");
 }
 
-.work-back {
+/* Overlay — slides up from beneath */
+.work-overlay {
+  position: absolute;
+  inset: 0;
   background: var(--ink);
   color: #fff;
-  transform: rotateY(180deg);
-  text-align: center;
-  gap: 0.5rem;
-  /* DO NOT add overflow:hidden — it creates a stacking context
-     that breaks preserve-3d and causes mirrored text. */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
+  text-align: center;
+  padding: 1.4rem 1.2rem;
+  gap: 0.45rem;
+  /* Hidden below the card */
+  transform: translateY(100%);
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.work-back h3 {
-  font-size: 1.35rem;
+.work-card:hover .work-overlay,
+.work-card.active .work-overlay {
+  transform: translateY(0);
+}
+
+.work-overlay h3 {
+  font-size: 1.2rem;
   font-family: var(--font-kai);
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  padding-bottom: 0.6rem;
+  padding-bottom: 0.5rem;
   width: 80%;
   letter-spacing: 0.1em;
+  margin-bottom: 0.2rem;
 }
 
-.work-back p {
-  font-size: 0.88rem;
-  opacity: 0.82;
-  line-height: 1.8;
-}
-
-.work-back .spacer {
-  flex: 1;
-}
-
-.work-back a {
-  color: #fff;
+.work-overlay p {
   font-size: 0.85rem;
+  opacity: 0.82;
+  line-height: 1.7;
+}
+
+.work-overlay .spacer {
+  flex: 1;
+  max-height: 0.6rem;
+}
+
+.work-overlay a {
+  color: #fff;
+  font-size: 0.82rem;
   text-decoration: none;
   border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 5px 16px;
+  padding: 4px 14px;
   border-radius: 255px 8px 225px 8px / 8px 225px 8px 255px;
-  transition: background var(--dur-fast), color var(--dur-fast), border-color var(--dur-fast);
+  transition: background var(--dur-fast), border-color var(--dur-fast);
   letter-spacing: 0.05em;
+  margin-top: 0.3rem;
 }
 
-.work-back a:hover {
+.work-overlay a:hover {
   background: var(--red);
   border-color: var(--red);
 }
+
+
 
 /* ============================================================
    CONTACT SECTION
@@ -1300,72 +1315,42 @@ body {
     padding: 1.8rem 1.2rem;
   }
 
-  /* ---- Works cards ---- */
+  /* ---- Works cards (overlay approach — no 3D) ---- */
   .works-container {
     grid-template-columns: repeat(2, 1fr);
     gap: 0.9rem;
   }
 
-  /* Auto-height to prevent overflow */
+  /* Fixed height — same as desktop, just smaller */
   .work-card {
-    height: auto;
-    min-height: 180px;
+    height: 220px;
   }
 
-  /* On mobile: disable 3D flip, use JS .flipped class instead */
-  .work-inner {
-    transform-style: flat;
-    transition: none;
-  }
-
-  .work-front,
-  .work-back {
-    position: static;
-    backface-visibility: visible;
-    -webkit-backface-visibility: visible;
-    transform: none;
-    width: 100%;
-  }
-
-  .work-back {
-    display: none;
-  }
-
-  .work-card.flipped .work-front {
-    display: none;
-  }
-
-  .work-card.flipped .work-back {
-    display: flex;
-    min-height: 180px;
-    padding: 1.2rem 0.8rem;
-  }
-
-  .work-back h3 {
-    font-size: 1rem;
-  }
-
-  .work-back p {
-    font-size: 0.8rem;
-    line-height: 1.6;
-  }
-
-  .work-back a {
-    font-size: 0.76rem;
-    padding: 4px 10px;
-    margin-top: 0.5rem !important;
-  }
-
-  .work-back .spacer {
-    flex: 0;
-    height: 0.4rem;
-  }
-
-  /* Vertical text slightly smaller */
+  /* Vertical text slightly smaller on mobile */
   .vertical-text {
     font-size: 2rem;
     letter-spacing: 0.3rem;
   }
+
+  /* Overlay text sizes on mobile */
+  .work-overlay h3 {
+    font-size: 1rem;
+  }
+
+  .work-overlay p {
+    font-size: 0.78rem;
+    line-height: 1.5;
+  }
+
+  .work-overlay a {
+    font-size: 0.74rem;
+    padding: 3px 10px;
+  }
+
+  .work-overlay .spacer {
+    max-height: 0.3rem;
+  }
+
 
   /* ---- About section punch ---- */
   .lead-text {
