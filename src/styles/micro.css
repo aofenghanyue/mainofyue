@@ -9,11 +9,12 @@
    ============================================================ */
 
 /* ============================================================
-   1. 毛笔指针
+   1. 斜放毛笔指针 — 左上笔尖为热点，右下细笔杆
    ============================================================ */
 
 body {
-    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='40' viewBox='0 0 32 40'%3E%3Cdefs%3E%3ClinearGradient id='b' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0%25' stop-color='%231a1410'/%3E%3Cstop offset='60%25' stop-color='%234a3828'/%3E%3Cstop offset='100%25' stop-color='%23a08060'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M16 0 C16 0 15 8 14.5 14 C14 18 13 22 12 26 C11 29 13 32 16 32 C19 32 21 29 20 26 C19 22 18 18 17.5 14 C17 8 16 0 16 0Z' fill='url(%23b)'/%3E%3Cellipse cx='16' cy='33' rx='4' ry='1.5' fill='%23b0a594' opacity='0.3'/%3E%3C/svg%3E") 16 2, auto;
+    /* 羽毛状桃花瓣 - 默认 (Tip at 0,0) - 修长且带纹路 */
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='p' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23fff5f7'/%3E%3Cstop offset='100%25' stop-color='%23ffc2cd'/%3E%3C/linearGradient%3E%3Cfilter id='s'%3E%3CfeDropShadow dx='1' dy='1' stdDeviation='1' flood-color='rgba(0,0,0,0.15)'/%3E%3C/filter%3E%3C/defs%3E%3Cpath d='M0 0 C 10 2, 26 8, 22 20 C 18 28, 6 20, 0 0 Z' fill='url(%23p)' stroke='%23e6aebd' stroke-width='0.5' filter='url(%23s)'/%3E%3Cpath d='M1 1 Q 12 10 18 18' stroke='%23d48090' stroke-width='0.3' fill='none' opacity='0.5'/%3E%3Cpath d='M0.5 0.5 Q 6 12 8 18' stroke='%23d48090' stroke-width='0.3' fill='none' opacity='0.4'/%3E%3C/svg%3E") 0 0, auto;
 }
 
 a,
@@ -24,7 +25,8 @@ button,
 .nav-hamburger,
 .nav-links a,
 .footer-links a {
-    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 36 36'%3E%3Ccircle cx='18' cy='18' r='5' fill='%23c43b2a' opacity='0.7'/%3E%3Ccircle cx='18' cy='18' r='10' fill='%23c43b2a' opacity='0.2'/%3E%3Ccircle cx='18' cy='18' r='15' fill='%23c43b2a' opacity='0.06'/%3E%3C/svg%3E") 18 18, pointer;
+    /* 羽毛状桃花瓣 - 悬停 (Tip at 0,0) - 鲜艳带纹路 */
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='ph' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23ffdde1'/%3E%3Cstop offset='100%25' stop-color='%23ff7eb3'/%3E%3C/linearGradient%3E%3Cfilter id='sh'%3E%3CfeDropShadow dx='1' dy='1' stdDeviation='1.5' flood-color='rgba(0,0,0,0.2)'/%3E%3C/filter%3E%3C/defs%3E%3Cpath d='M0 0 C 10 2, 26 8, 22 20 C 18 28, 6 20, 0 0 Z' fill='url(%23ph)' stroke='%23d45050' stroke-width='0.5' filter='url(%23sh)'/%3E%3Cpath d='M1 1 Q 12 10 18 18' stroke='%23c04060' stroke-width='0.4' fill='none' opacity='0.6'/%3E%3Cpath d='M0.5 0.5 Q 6 12 8 18' stroke='%23c04060' stroke-width='0.4' fill='none' opacity='0.5'/%3E%3C/svg%3E") 0 0, pointer;
 }
 
 /* ============================================================
