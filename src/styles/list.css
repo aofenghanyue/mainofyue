@@ -1,0 +1,204 @@
+/* ============================================================
+   文稿列表页
+   ============================================================ */
+
+.list-page-main {
+    max-width: 800px;
+    margin: 7rem auto 4rem;
+    padding: 0 5%;
+    position: relative;
+    z-index: 1;
+}
+
+.list-page-header {
+    text-align: center;
+    margin-bottom: 3.5rem;
+}
+
+.list-page-header h1 {
+    font-size: clamp(2rem, 6vw, 3rem);
+    font-family: var(--font-kai);
+    letter-spacing: 0.25em;
+    text-indent: 0.25em;
+    color: var(--color-ink-burnt);
+}
+
+.list-page-header p {
+    color: var(--color-ink-light);
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* 分类卡片 */
+.category-section {
+    background: rgba(255, 255, 255, 0.45);
+    border: 1px solid rgba(26, 20, 16, 0.06);
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    position: relative;
+    box-shadow: var(--shadow-ink-sm);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s var(--ease-ink),
+        transform 0.6s var(--ease-ink),
+        box-shadow 0.4s;
+}
+
+.category-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.category-section:hover {
+    box-shadow: var(--shadow-ink-md);
+}
+
+/* 角饰 */
+.category-section::before,
+.category-section::after {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-color: rgba(26, 20, 16, 0.06);
+    border-style: solid;
+}
+
+.category-section::before {
+    top: 8px;
+    left: 8px;
+    border-width: 1px 0 0 1px;
+}
+
+.category-section::after {
+    bottom: 8px;
+    right: 8px;
+    border-width: 0 1px 1px 0;
+}
+
+.category-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid rgba(26, 20, 16, 0.05);
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.category-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--color-vermilion);
+    color: var(--color-paper);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-kai);
+    font-size: 1.4rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(196, 59, 42, 0.2);
+    /* 做旧 */
+    background-image:
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E");
+    background-blend-mode: overlay;
+}
+
+.category-title {
+    font-family: var(--font-kai);
+    font-size: 1.35rem;
+    color: var(--color-ink-burnt);
+    letter-spacing: 0.12em;
+}
+
+.category-desc {
+    font-size: 0.78rem;
+    color: var(--color-ink-light);
+    margin-top: 0.15rem;
+}
+
+.article-list {
+    list-style: none;
+}
+
+.article-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid rgba(26, 20, 16, 0.04);
+    transition: all 0.3s;
+    border-radius: 4px;
+}
+
+.article-item:last-child {
+    border-bottom: none;
+}
+
+.article-item:hover {
+    padding-left: 10px;
+    background: rgba(26, 20, 16, 0.015);
+}
+
+.article-link {
+    text-decoration: none;
+    color: var(--color-ink-heavy);
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.3s;
+}
+
+.article-link:hover {
+    color: var(--color-vermilion);
+}
+
+.article-link::before {
+    content: '·';
+    font-size: 1.2rem;
+    color: var(--color-ink-faint);
+    transition: all 0.3s;
+}
+
+.article-item:hover .article-link::before {
+    color: var(--color-vermilion);
+}
+
+.article-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-shrink: 0;
+    margin-left: 1rem;
+}
+
+.article-date {
+    font-size: 0.75rem;
+    color: var(--color-ink-faint);
+    font-family: var(--font-sans);
+    white-space: nowrap;
+}
+
+.tag {
+    font-size: 0.6rem;
+    padding: 1px 7px;
+    background: rgba(196, 59, 42, 0.06);
+    border: 1px solid rgba(196, 59, 42, 0.12);
+    border-radius: 100px;
+    color: var(--color-vermilion);
+    font-family: var(--font-sans);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--color-ink-faint);
+    font-style: italic;
+    font-size: 0.85rem;
+    line-height: 2;
+}

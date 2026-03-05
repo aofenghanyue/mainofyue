@@ -1,0 +1,34 @@
+/* ============================================================
+   Ofyue — 水墨丹青设计系统
+   "墨分五色 · 宣纸为底 · 留白为美"
+   
+   模块拆分：
+   - tokens.css   → 设计令牌 + 主题变量
+   - base.css     → 基础重置 + 通用元素
+   - loading.css  → 加载动画
+   - nav.css      → 导航栏
+   - hero.css     → 首页主视觉
+   - sections.css → 区块通用 + 卡片
+   - works.css    → 作品卡片
+   - list.css     → 文稿列表页
+   - footer.css   → 页脚
+   - effects.css  → 视觉效果（远山/粒子/墨滴/云雾）
+   - responsive.css → 响应式
+   ============================================================ */
+
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;700;900&family=Noto+Sans+SC:wght@300;400;700&display=swap');
+
+@import "./tokens.css";
+@import "./base.css";
+@import "./loading.css";
+@import "./nav.css";
+@import "./hero.css";
+@import "./sections.css";
+@import "./works.css";
+@import "./list.css";
+@import "./footer.css";
+@import "./effects.css";
+@import "./responsive.css";
+@import "./micro.css";

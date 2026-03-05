@@ -1,0 +1,170 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import WorkCard from '../components/WorkCard.astro';
+import LoadingScreen from '../components/LoadingScreen.astro';
+import InkCanvas from '../components/InkCanvas.astro';
+import BackToTop from '../components/BackToTop.astro';
+import MicroEffects from '../components/MicroEffects.astro';
+import '../styles/global.css';
+---
+
+<Layout title="Ofyue | 水墨丹青">
+  <LoadingScreen />
+  <InkCanvas />
+  <Nav />
+
+  <main>
+    <!-- ===== HERO — 大面积留白 ===== -->
+    <section id="home" class="hero-section">
+      <!-- 墨晕圆环 -->
+      <div class="hero-ink-circle" aria-hidden="true"></div>
+
+      <!-- 浮动淡墨粒子 -->
+      <div class="hero-particles" aria-hidden="true">
+        <div class="hero-particle"></div>
+        <div class="hero-particle"></div>
+        <div class="hero-particle"></div>
+        <div class="hero-particle"></div>
+        <div class="hero-particle"></div>
+        <div class="hero-particle"></div>
+        <div class="hero-particle"></div>
+        <div class="hero-particle"></div>
+      </div>
+
+      <div class="hero-eyebrow" data-aos="fade-down" data-aos-delay="300" data-aos-duration="1200">
+        Personal Space of Ofyue
+      </div>
+      <h1 class="hero-title">怎么可能</h1>
+      <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="800" data-aos-duration="1200">
+        " 世人笑我太疯癫，我笑代码写不完。"
+      </p>
+
+      <!-- 题词标签 -->
+      <div class="hero-verse">
+        <span>长风破浪会有时</span>
+      </div>
+
+      <div class="scroll-cue" aria-hidden="true">向下</div>
+    </section>
+
+    <!-- ===== ABOUT — 居中 + 留白 ===== -->
+    <section id="about" class="content-section" style="padding-top:10rem;padding-bottom:10rem;">
+      <div class="section-inner">
+        <div class="ink-card reveal" style="max-width:680px;margin:0 auto;">
+          <div class="corner-tl"></div>
+          <div class="corner-br"></div>
+          <div class="section-header">
+            <span class="section-label">ABOUT</span>
+            <h2 class="section-title">关 于 我</h2>
+            <div class="section-divider"></div>
+          </div>
+          <div class="about-text">
+            <p>
+              有那么一个男人，他<strong>善良</strong>、<strong>幽默</strong>、<strong>豁达</strong>、<strong>大度</strong>、<strong>深情</strong>、还<strong>才高八斗</strong>，
+            </p>
+            <p class="about-punchline" style="margin-top:2.5rem;">
+              没错，就是我...&ensp;
+              <span style="font-size:0.78rem;color:var(--color-ink-light);display:inline-block;vertical-align:middle;text-align:left;margin-left:10px;line-height:1.3;transform:rotate(-3deg);">
+                最爱的<br>
+                <span class="highlight-name">苏东坡</span>
+              </span>
+            </p>
+          </div>
+          <div style="width:25%;margin:2.5rem auto 0;height:1px;background:linear-gradient(90deg,transparent,var(--color-ink-faint),transparent);"></div>
+          <p style="text-align:center;font-size:0.78rem;color:var(--color-ink-faint);margin-top:0.6rem;font-style:italic;">
+            （当然，我也在努力向偶像看齐）
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== WORKS — 充足间距 ===== -->
+    <section id="works" class="content-section" style="padding-top:8rem;padding-bottom:10rem;">
+      <div class="section-inner" style="max-width:940px;">
+        <div class="section-header reveal" style="margin-bottom:5rem;">
+          <span class="section-label">WORKS</span>
+          <h2 class="section-title">所 思 所 迹</h2>
+          <div class="section-divider"></div>
+          <p class="section-desc" style="margin-top:1.8rem;">词 话 &ensp;·&ensp; 阅 微 &ensp;·&ensp; 格 物 &ensp;·&ensp; 异 想</p>
+        </div>
+
+        <div class="works-grid reveal">
+          <WorkCard
+            title="词话"
+            subtitle="闲词几首"
+            desc1="半纸功名&#10;一窗风雨"
+            desc2="写点无病呻吟&#10;记点人间烟火"
+            link="/list#poetry"
+            linkText="进入词话"
+            sealChar="傲"
+          />
+          <WorkCard
+            title="阅微"
+            subtitle="开卷有得"
+            desc1="好读书&#10;不求甚解"
+            desc2="每有会意&#10;便欣然忘食"
+            link="/list#reading"
+            linkText="进入阅微"
+            sealChar="风"
+          />
+          <WorkCard
+            title="格物"
+            subtitle="技术探究"
+            desc1="致知&#10;在格物"
+            desc2="代码构建世界&#10;逻辑编织未来"
+            link="/list#tech"
+            linkText="进入格物"
+            sealChar="寒"
+          />
+          <WorkCard
+            title="异想"
+            subtitle="天马行空"
+            desc1="庄周梦蝶&#10;不知虚实"
+            desc2="记录每一个&#10;荒诞不经的脑洞"
+            link="/list#whimsy"
+            linkText="进入异想"
+            sealChar="月"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CONTACT — 极简 + 留白 ===== -->
+    <section id="contact" class="content-section" style="padding-top:8rem;padding-bottom:8rem;">
+      <div class="section-inner" style="max-width:540px;">
+        <div class="reveal" style="text-align:center;">
+          <span class="section-label">CONTACT</span>
+          <h2 class="section-title">鸿 雁 传 书</h2>
+          <div class="section-divider" style="margin-bottom:3rem;"></div>
+
+          <p class="contact-lead">" <strong style="color:var(--color-ink-burnt);">谁在呼叫舰队？</strong> "</p>
+          <p class="contact-sub" style="margin-bottom:3rem;">（ 或是欲煮酒论码，亦不妨致信一封 ）</p>
+
+          <div class="social-links">
+            <a href="https://github.com/aofenghanyue" target="_blank" rel="noopener" class="ink-btn">GitHub</a>
+            <a href="mailto:1772155440@qq.com" class="ink-btn">Email</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+  <BackToTop />
+  <MicroEffects />
+
+  <!-- Mobile tap for work cards -->
+  <script>
+    document.querySelectorAll('.work-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        if (window.innerWidth > 640) return;
+        if ((e.target as Element).closest('a')) return;
+        const isActive = card.classList.contains('active');
+        document.querySelectorAll('.work-card.active').forEach(c => c.classList.remove('active'));
+        if (!isActive) card.classList.add('active');
+      });
+    });
+  </script>
+</Layout>

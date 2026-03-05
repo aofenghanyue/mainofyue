@@ -1,0 +1,78 @@
+/* ============================================================
+   页脚
+   ============================================================ */
+
+.site-footer {
+    position: relative;
+    z-index: 1;
+    padding: 4rem 5% 2.5rem;
+    text-align: center;
+    border-top: 1px solid rgba(26, 20, 16, 0.06);
+}
+
+/* 装饰符号 */
+.site-footer::before {
+    content: '〄';
+    position: absolute;
+    top: -0.55rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-paper);
+    padding: 0 1rem;
+    color: var(--color-ink-faint);
+    font-size: 0.7rem;
+    opacity: 0.5;
+}
+
+.footer-quote-text {
+    font-size: 1rem;
+    font-family: var(--font-kai);
+    color: var(--color-ink-light);
+    letter-spacing: 0.4em;
+}
+
+.footer-links {
+    margin: 1rem 0;
+    font-size: 0.82rem;
+}
+
+.footer-links a {
+    color: var(--color-ink-light);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.footer-links a:hover {
+    color: var(--color-vermilion);
+}
+
+.footer-sep {
+    margin: 0 0.6rem;
+    color: var(--color-ink-faint);
+    opacity: 0.4;
+}
+
+.footer-copy {
+    font-size: 0.7rem;
+    color: var(--color-ink-faint);
+    font-family: var(--font-sans);
+    margin-top: 0.4rem;
+}
+
+.seal-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-vermilion);
+    color: var(--color-paper);
+    padding: 1px 5px;
+    border-radius: 2px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    font-family: var(--font-kai);
+    box-shadow: 0 1px 4px rgba(196, 59, 42, 0.2);
+    /* 做旧 */
+    background-image:
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.1'/%3E%3C/svg%3E");
+    background-blend-mode: overlay;
+}

@@ -1,0 +1,131 @@
+---
+// MicroEffects.astro v2 — 更明显的微交互
+// · 动态岁月感 (纸色随时间变化)
+// · 飞白墨星 (快速滑动时, 更大更明显)
+// · 按钮悬停朱砂涟漪动画
+---
+
+<script>
+  // ---- 1. 动态岁月感 ----
+  function setTimePeriod() {
+    const hour = new Date().getHours();
+    let period: string;
+    if (hour >= 5 && hour < 8) period = 'dawn';
+    else if (hour >= 8 && hour < 14) period = 'morning';
+    else if (hour >= 14 && hour < 17) period = 'afternoon';
+    else if (hour >= 17 && hour < 20) period = 'dusk';
+    else period = 'night';
+
+    document.body.setAttribute('data-time-period', period);
+  }
+
+  setTimePeriod();
+  setInterval(setTimePeriod, 600000);
+
+  // ---- 2. 飞白墨星 — 更大更明显 ----
+  let lastX = 0, lastY = 0, lastTime = 0;
+  let starCount = 0;
+
+  document.addEventListener('mousemove', (e) => {
+    const now = Date.now();
+    const dt = now - lastTime;
+    if (dt < 25) return;
+
+    const dx = e.clientX - lastX;
+    const dy = e.clientY - lastY;
+    const speed = Math.sqrt(dx * dx + dy * dy) / Math.max(dt, 1);
+
+    lastX = e.clientX;
+    lastY = e.clientY;
+    lastTime = now;
+
+    // Spawn when moving fast, with higher chance, capped to avoid overwhelming
+    if (speed > 1.2 && Math.random() < 0.25 && starCount < 20) {
+      spawnInkStar(e.clientX, e.clientY, speed);
+    }
+  }, { passive: true });
+
+  function spawnInkStar(x: number, y: number, speed: number) {
+    starCount++;
+    const star = document.createElement('div');
+    star.className = 'ink-star';
+    // Bigger particles for faster movement
+    const size = 2 + Math.random() * 3 + Math.min(speed * 0.5, 3);
+    const ox = (Math.random() - 0.5) * 30;
+    const oy = (Math.random() - 0.5) * 30;
+    const startOp = 0.25 + Math.random() * 0.2;
+    star.style.cssText = `
+      left: ${x + ox}px;
+      top: ${y + oy}px;
+      width: ${size}px;
+      height: ${size}px;
+      opacity: ${startOp};
+    `;
+    document.body.appendChild(star);
+
+    const startTime = Date.now();
+    const dur = 800 + Math.random() * 600;
+    const driftX = (Math.random() - 0.5) * 15;
+    const driftY = Math.random() * -12 - 5;
+
+    function fade() {
+      const p = (Date.now() - startTime) / dur;
+      if (p >= 1) {
+        star.remove();
+        starCount--;
+        return;
+      }
+      const ease = 1 - p * p;
+      star.style.transform = `translate(${driftX * p}px, ${driftY * p}px)`;
+      star.style.opacity = String(startOp * ease);
+      requestAnimationFrame(fade);
+    }
+    requestAnimationFrame(fade);
+  }
+
+  // ---- 3. 按钮朱砂涟漪 ----
+  document.querySelectorAll('.ink-btn').forEach(btn => {
+    btn.addEventListener('mouseenter', (e) => {
+      const el = btn as HTMLElement;
+      const rect = el.getBoundingClientRect();
+      const ripple = document.createElement('span');
+      ripple.style.cssText = `
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(196,59,42,0.3) 0%, rgba(196,59,42,0.05) 70%, transparent 100%);
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+        z-index: 0;
+      `;
+      el.appendChild(ripple);
+
+      // Animate expansion
+      const maxSize = Math.max(rect.width, rect.height) * 3;
+      const start = Date.now();
+      const dur = 600;
+
+      function expand() {
+        const p = Math.min((Date.now() - start) / dur, 1);
+        const ease = 1 - Math.pow(1 - p, 3);
+        const size = maxSize * ease;
+        ripple.style.width = size + 'px';
+        ripple.style.height = size + 'px';
+        if (p < 1) requestAnimationFrame(expand);
+      }
+      requestAnimationFrame(expand);
+
+      // Remove on mouse leave
+      const remove = () => {
+        ripple.style.transition = 'opacity 0.4s';
+        ripple.style.opacity = '0';
+        setTimeout(() => ripple.remove(), 400);
+        el.removeEventListener('mouseleave', remove);
+      };
+      el.addEventListener('mouseleave', remove);
+    });
+  });
+</script>

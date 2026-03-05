@@ -1,0 +1,151 @@
+---
+// InkCanvas.astro v3 — 水墨粒子 + 墨滴 + 远山5层 + 松树 + 云雾 + 浮字 + 进度条 + 揭示
+// 配色调整为宣纸底色上的淡墨渲染
+---
+
+<!-- 阅读进度条 -->
+<div id="reading-progress" aria-hidden="true"></div>
+
+<!-- 水墨粒子画布 -->
+<canvas id="ink-canvas" aria-hidden="true"></canvas>
+
+<!-- 远山层叠 (5层 + 松树) -->
+<div class="mountain-layer mountain-far" aria-hidden="true"></div>
+<div class="mountain-layer mountain-mid-far" aria-hidden="true"></div>
+<div class="mountain-layer mountain-mid" aria-hidden="true"></div>
+<div class="mountain-layer mountain-near" aria-hidden="true"></div>
+<div class="mountain-trees" aria-hidden="true"></div>
+
+<!-- 云雾 -->
+<div class="mist-layer" aria-hidden="true"></div>
+<div class="mist-layer" aria-hidden="true"></div>
+
+
+
+<script>
+  // ---- 水墨粒子系统 (宣纸上的淡墨晕染) ----
+  const canvas = document.getElementById('ink-canvas') as HTMLCanvasElement;
+  if (canvas) {
+    const ctx = canvas.getContext('2d')!;
+    let W: number, H: number;
+    let particles: Array<{
+      x: number; y: number; vx: number; vy: number;
+      r: number; o: number; grow: number; shade: number;
+    }> = [];
+
+    function resize() {
+      W = canvas.width = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+
+    function createParticle() {
+      const shade = Math.random();
+      return {
+        x: Math.random() * W,
+        y: Math.random() * H,
+        vx: (Math.random() - 0.5) * 0.15,
+        vy: (Math.random() - 0.5) * 0.15,
+        r: Math.random() * 130 + 40,
+        o: Math.random() * 0.015 + 0.003,
+        grow: (Math.random() - 0.5) * 0.06,
+        shade: shade,
+      };
+    }
+
+    function initParticles() {
+      resize();
+      particles = [];
+      const n = Math.floor((W * H) / 35000);
+      for (let i = 0; i < n; i++) particles.push(createParticle());
+    }
+
+    function loop() {
+      ctx.clearRect(0, 0, W, H);
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.r = Math.max(25, p.r + p.grow);
+        if (p.x < -p.r) p.x = W + p.r;
+        if (p.x > W + p.r) p.x = -p.r;
+        if (p.y < -p.r) p.y = H + p.r;
+        if (p.y > H + p.r) p.y = -p.r;
+
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
+        // 水墨色调：从深到浅的暖灰
+        const r = Math.floor(26 + p.shade * 20);
+        const gv = Math.floor(20 + p.shade * 15);
+        const b = Math.floor(16 + p.shade * 12);
+        g.addColorStop(0, `rgba(${r},${gv},${b},${p.o})`);
+        g.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.beginPath();
+        ctx.fillStyle = g;
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      requestAnimationFrame(loop);
+    }
+
+    window.addEventListener('resize', initParticles, { passive: true });
+    initParticles();
+    loop();
+  }
+
+  // ---- 阅读进度条 ----
+  const progressBar = document.getElementById('reading-progress');
+  window.addEventListener('scroll', () => {
+    if (!progressBar) return;
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = Math.min(scrollTop / Math.max(docHeight, 1), 1);
+    progressBar.style.width = (progress * 100) + '%';
+  }, { passive: true });
+
+  // ---- 墨滴点击效果 (墨色扩散) ----
+  let lastClick = 0;
+  document.addEventListener('click', (e) => {
+    const now = Date.now();
+    if (now - lastClick < 500) return;
+    lastClick = now;
+    if ((e.target as Element).closest('a, button, input, select, textarea')) return;
+
+    const drop = document.createElement('div');
+    drop.className = 'ink-drop';
+    drop.style.cssText = `left:${e.clientX}px;top:${e.clientY}px;width:6px;height:6px;`;
+    document.body.appendChild(drop);
+
+    const finalSize = 25 + Math.random() * 20;
+    const start = Date.now();
+    const dur = 800;
+
+    function animate() {
+      const p = Math.min((Date.now() - start) / dur, 1);
+      const ease = 1 - Math.pow(1 - p, 3);
+      const size = 6 + (finalSize - 6) * ease;
+      const a = 0.35 * (1 - p);
+      drop.style.width = size + 'px';
+      drop.style.height = size + 'px';
+      // 墨色墨滴：深棕到淡灰
+      drop.style.background = `radial-gradient(circle,
+        rgba(26,20,16,${a}) 0%,
+        rgba(74,64,53,${a * 0.5}) 40%,
+        rgba(176,165,148,${a * 0.2}) 70%,
+        transparent 100%)`;
+      drop.style.filter = `url(#ink-spread-filter)`;
+      if (p < 1) requestAnimationFrame(animate);
+      else drop.remove();
+    }
+    requestAnimationFrame(animate);
+  });
+
+  // ---- 滚动揭示 ----
+  const revealEls = document.querySelectorAll('.reveal');
+  const revealObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  revealEls.forEach(el => revealObs.observe(el));
+</script>

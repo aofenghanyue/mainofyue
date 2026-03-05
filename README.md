@@ -1,49 +1,46 @@
-# Ofyue 个人主页
+# Astro Starter Kit: Basics
 
-这是一个充满新中式水墨风格的个人主页，展示了作者的作品、思考和联系方式。
-
-## 🎨 设计特色
-
-*   **水墨丹青风格**：整体配色采用米黄宣纸色与淡墨灰，配合细腻的宣纸纹理。
-*   **全景视差背景**：使用 CSS/JS 实现的沉浸式滚动视差效果，背景长卷随页面滚动而平移。
-*   **动态交互**：
-    *   鼠标点击触发水墨晕染特效。
-    *   卡片悬浮翻转效果（词话、阅微、格物、异想）。
-    *   平滑滚动导航。
-*   **响应式设计**：完美适配桌面端、平板和移动端设备。
-
-## 🛠️ 技术栈
-
-*   **HTML5**
-*   **CSS3** (Flexbox, Grid, CSS Variables, Animations)
-*   **JavaScript** (Vanilla JS, Intersection Observer)
-
-## 📂 项目结构
-
-```
-pageOfyue/
-├── index.html          # 主页面
-├── assets/
-│   ├── css/
-│   │   └── style.css   # 样式表
-│   ├── js/
-│   │   └── script.js   # 交互逻辑
-│   └── img/
-│       └── bg_panorama.jpg # 全景背景图
-└── README.md           # 说明文档
+```sh
+npm create astro@latest -- --template basics
 ```
 
-## 🚀 部署说明
+> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
 
-本项目为纯静态网页，可以直接部署到任何静态网站托管服务，例如：
+## 🚀 Project Structure
 
-*   **GitHub Pages**
-*   **Vercel**
-*   **Netlify**
-*   **Cloudflare Pages**
+Inside of your Astro project, you'll see the following folders and files:
 
-只需将整个项目文件夹上传即可。
+```text
+/
+├── public/
+│   └── favicon.svg
+├── src
+│   ├── assets
+│   │   └── astro.svg
+│   ├── components
+│   │   └── Welcome.astro
+│   ├── layouts
+│   │   └── Layout.astro
+│   └── pages
+│       └── index.astro
+└── package.json
+```
 
-## 📝 版权
+To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
 
-© 2026 Ofyue. All Rights Reserved.
+## 🧞 Commands
+
+All commands are run from the root of the project, from a terminal:
+
+| Command                   | Action                                           |
+| :------------------------ | :----------------------------------------------- |
+| `npm install`             | Installs dependencies                            |
+| `npm run dev`             | Starts local dev server at `localhost:4321`      |
+| `npm run build`           | Build your production site to `./dist/`          |
+| `npm run preview`         | Preview your build locally, before deploying     |
+| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
+| `npm run astro -- --help` | Get help using the Astro CLI                     |
+
+## 👀 Want to learn more?
+
+Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).

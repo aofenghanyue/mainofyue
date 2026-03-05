@@ -1,0 +1,13 @@
+---
+// SmartImage.astro — 图片占位组件
+interface Props {
+  keyword: string;
+  width?: number;
+  height?: number;
+}
+
+const { keyword, width = 800, height = 600 } = Astro.props;
+const src = `https://source.unsplash.com/random/${width}x${height}/?${keyword}`;
+---
+
+<img src={src} alt={keyword} class="rounded-lg shadow-md" loading="lazy" />

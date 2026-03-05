@@ -1,1 +1,25 @@
+# build output
+dist/
+
+# dependencies
+node_modules/
+
+# astro
+.astro/
+
+# dev notes (local only)
 temp/
+
+# IDE
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# env
+.env
+.env.*
+
+.agent
+agents.md

@@ -1,0 +1,46 @@
+/* ============================================================
+   基础重置 + 通用元素
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* ::selection is in micro.css (朱批 style) */
+
+body {
+    font-family: var(--font-serif);
+    color: var(--color-ink-dense);
+    line-height: 1.8;
+    overflow-x: hidden;
+    position: relative;
+    background-color: var(--color-paper);
+    /* 宣纸纹理 SVG noise overlay */
+    background-image:
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    background-attachment: fixed;
+}
+
+/* 阅读进度条 (朱砂色, 顶部细线) */
+#reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    width: 0%;
+    background: linear-gradient(90deg,
+            var(--color-vermilion),
+            var(--color-vermilion-light),
+            var(--color-vermilion));
+    z-index: 9998;
+    transition: width 0.15s linear;
+    box-shadow: 0 0 6px rgba(196, 59, 42, 0.3);
+}

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect width="100" height="100" rx="12" fill="#0a0a0a"/>
+  <rect x="8" y="8" width="84" height="84" rx="8" fill="none" stroke="#c9a84c" stroke-width="1" opacity="0.3"/>
+  <text x="50" y="72" font-size="55" text-anchor="middle" fill="#c9a84c" font-family="KaiTi, STKaiti, serif" font-weight="bold" opacity="0.9">月</text>
+</svg>

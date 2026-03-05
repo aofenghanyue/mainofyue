@@ -1,0 +1,260 @@
+/* ============================================================
+   视觉效果 — 远山 / 水墨粒子 / 云雾 / 浮字 / 墨滴
+   ============================================================ */
+
+/* --- Canvas --- */
+#ink-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* ============================================================
+   远山层叠 — 水墨画风格（淡墨渲染，5层）
+   ============================================================ */
+.mountain-layer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* 最远层 — 朦胧淡影 */
+.mountain-far {
+    height: 35vh;
+    background: linear-gradient(to top,
+            rgba(26, 20, 16, 0.06) 0%,
+            rgba(26, 20, 16, 0.02) 50%,
+            transparent 100%);
+    clip-path: polygon(0% 100%, 0% 72%, 3% 65%, 8% 58%, 14% 52%, 18% 48%,
+            24% 44%, 30% 40%, 36% 38%, 42% 36%, 48% 38%, 54% 34%,
+            60% 32%, 66% 28%, 72% 32%, 78% 36%, 84% 34%, 90% 40%,
+            96% 46%, 100% 50%, 100% 100%);
+    opacity: 0.7;
+    animation: mountainFloat 35s ease-in-out infinite alternate;
+}
+
+.mountain-mid-far {
+    height: 30vh;
+    background: linear-gradient(to top,
+            rgba(26, 20, 16, 0.08) 0%,
+            rgba(26, 20, 16, 0.03) 55%,
+            transparent 100%);
+    clip-path: polygon(0% 100%, 0% 68%, 5% 60%, 10% 55%, 16% 50%, 22% 46%,
+            28% 42%, 34% 45%, 40% 40%, 46% 44%, 52% 38%, 58% 42%,
+            64% 36%, 70% 40%, 76% 45%, 82% 42%, 88% 48%, 94% 52%,
+            100% 56%, 100% 100%);
+    opacity: 0.6;
+    animation: mountainFloat 28s ease-in-out infinite alternate-reverse;
+}
+
+.mountain-mid {
+    height: 22vh;
+    background: linear-gradient(to top,
+            rgba(26, 20, 16, 0.1) 0%,
+            rgba(26, 20, 16, 0.04) 55%,
+            transparent 100%);
+    clip-path: polygon(0% 100%, 0% 72%, 6% 62%, 12% 56%, 18% 60%, 24% 52%,
+            32% 48%, 38% 54%, 44% 46%, 52% 50%, 58% 42%, 66% 48%,
+            72% 55%, 78% 48%, 86% 52%, 92% 58%, 100% 62%, 100% 100%);
+    opacity: 0.5;
+    animation: mountainFloat 22s ease-in-out infinite alternate;
+}
+
+.mountain-near {
+    height: 14vh;
+    background: linear-gradient(to top,
+            rgba(26, 20, 16, 0.12) 0%,
+            rgba(26, 20, 16, 0.04) 65%,
+            transparent 100%);
+    clip-path: polygon(0% 100%, 0% 78%, 8% 65%, 16% 58%, 28% 52%,
+            42% 60%, 56% 50%, 70% 58%, 82% 52%, 94% 60%, 100% 65%, 100% 100%);
+    opacity: 0.45;
+}
+
+/* 松树剪影 */
+.mountain-trees {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 12vh;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.08;
+}
+
+.mountain-trees::before,
+.mountain-trees::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    background: var(--color-ink-burnt);
+}
+
+.mountain-trees::before {
+    left: 10%;
+    width: 2px;
+    height: 7vh;
+    box-shadow:
+        -5px 1.5vh 0 0 var(--color-ink-burnt),
+        5px 1.5vh 0 0 var(--color-ink-burnt),
+        -8px 3vh 0 0 var(--color-ink-burnt),
+        8px 3vh 0 0 var(--color-ink-burnt),
+        -3px 4.5vh 0 0 var(--color-ink-burnt),
+        3px 4.5vh 0 0 var(--color-ink-burnt);
+}
+
+.mountain-trees::after {
+    right: 15%;
+    width: 2px;
+    height: 5vh;
+    box-shadow:
+        -4px 1vh 0 0 var(--color-ink-burnt),
+        4px 1vh 0 0 var(--color-ink-burnt),
+        -7px 2.5vh 0 0 var(--color-ink-burnt),
+        7px 2.5vh 0 0 var(--color-ink-burnt);
+}
+
+@keyframes mountainFloat {
+    from {
+        transform: translateX(-5px);
+    }
+
+    to {
+        transform: translateX(5px);
+    }
+}
+
+/* ============================================================
+   云雾
+   ============================================================ */
+.mist-layer {
+    position: fixed;
+    bottom: 8vh;
+    left: -10%;
+    width: 120%;
+    height: 20vh;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.06;
+    background: linear-gradient(to top,
+            rgba(26, 20, 16, 0.04) 0%,
+            transparent 100%);
+    filter: blur(25px);
+    animation: mistDrift 30s ease-in-out infinite alternate;
+}
+
+.mist-layer:nth-child(2) {
+    bottom: 15vh;
+    height: 15vh;
+    opacity: 0.04;
+    animation-delay: -12s;
+    animation-duration: 25s;
+    filter: blur(35px);
+}
+
+@keyframes mistDrift {
+    0% {
+        transform: translateX(-3%);
+    }
+
+    100% {
+        transform: translateX(3%);
+    }
+}
+
+/* ============================================================
+   浮动汉字
+   ============================================================ */
+.ambient-chars {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.ambient-char {
+    position: absolute;
+    font-family: var(--font-kai);
+    font-size: 8rem;
+    opacity: 0.015;
+    color: var(--color-ink-burnt);
+    user-select: none;
+    animation: ambientDrift 45s ease-in-out infinite;
+}
+
+.ambient-char:nth-child(1) {
+    left: 5%;
+    top: 15%;
+    animation-delay: 0s;
+}
+
+.ambient-char:nth-child(2) {
+    right: 8%;
+    top: 35%;
+    animation-delay: -10s;
+    font-size: 6rem;
+}
+
+.ambient-char:nth-child(3) {
+    left: 12%;
+    bottom: 25%;
+    animation-delay: -18s;
+    font-size: 10rem;
+}
+
+.ambient-char:nth-child(4) {
+    right: 12%;
+    bottom: 35%;
+    animation-delay: -26s;
+    font-size: 7rem;
+}
+
+.ambient-char:nth-child(5) {
+    left: 48%;
+    top: 50%;
+    animation-delay: -34s;
+    font-size: 5rem;
+}
+
+@keyframes ambientDrift {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0.015;
+    }
+
+    25% {
+        transform: translateY(-15px) rotate(1deg);
+        opacity: 0.025;
+    }
+
+    50% {
+        transform: translateY(8px) rotate(-0.5deg);
+        opacity: 0.01;
+    }
+
+    75% {
+        transform: translateY(-8px) rotate(0.5deg);
+        opacity: 0.02;
+    }
+}
+
+/* ============================================================
+   墨滴点击
+   ============================================================ */
+.ink-drop {
+    position: fixed;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 9000;
+}

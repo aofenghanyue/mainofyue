@@ -1,0 +1,109 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import InkCanvas from '../components/InkCanvas.astro';
+import BackToTop from '../components/BackToTop.astro';
+import MicroEffects from '../components/MicroEffects.astro';
+import '../styles/global.css';
+
+// Content collections — will be empty until articles are added
+// import { getCollection } from 'astro:content';
+// const blogPosts = await getCollection('blog');
+---
+
+<Layout title="所思所迹 | Ofyue" description="Ofyue的文稿合集——词话、阅微、格物、异想，所思所迹皆在此。">
+  <InkCanvas />
+  <Nav />
+
+  <main class="list-page-main">
+    <!-- Page header -->
+    <header class="list-page-header reveal">
+      <h1>所 思 所 迹</h1>
+      <p>记录每一处思绪流经的印迹</p>
+      <div style="display:flex;align-items:center;gap:1rem;margin-top:1.5rem;justify-content:center;">
+        <div style="height:1px;width:60px;background:linear-gradient(to right,transparent,var(--color-ink-faint));"></div>
+        <span style="color:var(--color-ink-light);font-size:0.7rem;letter-spacing:0.3em;font-family:var(--font-sans);">WRITINGS</span>
+        <div style="height:1px;width:60px;background:linear-gradient(to left,transparent,var(--color-ink-faint));"></div>
+      </div>
+    </header>
+
+    <div id="categories-container">
+      <!-- 词话 Poetry -->
+      <section id="poetry" class="category-section">
+        <div class="category-header">
+          <div class="category-icon">词</div>
+          <div>
+            <div class="category-title">词 话</div>
+            <div class="category-desc">闲词几首 · 半纸功名 · 一窗风雨</div>
+          </div>
+        </div>
+        <ul class="article-list">
+          <div class="empty-state">暂无文章，待填坑&emsp;—&emsp;「半纸功名，一窗风雨」</div>
+        </ul>
+      </section>
+
+      <!-- 阅微 Reading -->
+      <section id="reading" class="category-section">
+        <div class="category-header">
+          <div class="category-icon">阅</div>
+          <div>
+            <div class="category-title">阅 微</div>
+            <div class="category-desc">开卷有得 · 好读书 · 不求甚解</div>
+          </div>
+        </div>
+        <ul class="article-list">
+          <div class="empty-state">书山有路勤为径，但我还在找路&emsp;—&emsp;「每有会意，便欣然忘食」</div>
+        </ul>
+      </section>
+
+      <!-- 格物 Tech -->
+      <section id="tech" class="category-section">
+        <div class="category-header">
+          <div class="category-icon">格</div>
+          <div>
+            <div class="category-title">格 物</div>
+            <div class="category-desc">技术探究 · 致知在格物</div>
+          </div>
+        </div>
+        <ul class="article-list">
+          <div class="empty-state">代码都在 GitHub，这里只有 bug 记录&emsp;—&emsp;「代码构建世界，逻辑编织未来」</div>
+        </ul>
+      </section>
+
+      <!-- 异想 Whimsy -->
+      <section id="whimsy" class="category-section">
+        <div class="category-header">
+          <div class="category-icon">异</div>
+          <div>
+            <div class="category-title">异 想</div>
+            <div class="category-desc">天马行空 · 庄周梦蝶 · 荒诞不经</div>
+          </div>
+        </div>
+        <ul class="article-list">
+          <div class="empty-state">记录每一个荒诞不经的脑洞&emsp;—&emsp;「庄周梦蝶，不知虚实」</div>
+        </ul>
+      </section>
+    </div>
+  </main>
+
+  <Footer />
+  <BackToTop />
+  <MicroEffects />
+
+  <script>
+    // Animate category sections on scroll
+    const sections = document.querySelectorAll('.category-section');
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            entry.target.classList.add('visible');
+          }, i * 120);
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.05 });
+    sections.forEach(s => obs.observe(s));
+  </script>
+</Layout>

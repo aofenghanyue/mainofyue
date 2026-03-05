@@ -1,0 +1,22 @@
+---
+// LoadingScreen.astro v3 — 宣纸底水墨入场 + 朱砂印章
+---
+
+<div id="loading-screen" aria-hidden="true">
+  <div style="display:flex;align-items:center;gap:0.8rem;">
+    <p class="loading-kanji">Ofyue</p>
+    <div class="loading-seal">印</div>
+  </div>
+  <p class="loading-sub">水 墨 丹 青 &emsp; 所 思 所 迹</p>
+  <div class="loading-brush"></div>
+</div>
+
+<script>
+  const ls = document.getElementById('loading-screen');
+  if (ls) {
+    window.addEventListener('load', () => {
+      setTimeout(() => ls.classList.add('loaded'), 2000);
+    });
+    setTimeout(() => ls?.classList.add('loaded'), 3500);
+  }
+</script>

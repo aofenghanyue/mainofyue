@@ -1,0 +1,28 @@
+---
+// WorkCard.astro — 所思所迹卡片
+interface Props {
+  title: string;
+  subtitle: string;
+  desc1: string;
+  desc2: string;
+  link: string;
+  linkText: string;
+  sealChar: string;
+}
+
+const { title, subtitle, desc1, desc2, link, linkText, sealChar } = Astro.props;
+---
+
+<div class="work-card">
+  <div class="work-front">
+    <span class="vertical-kanji">{title}</span>
+    <div class="card-seal">{sealChar}</div>
+  </div>
+  <div class="work-overlay">
+    <h3>{subtitle}</h3>
+    <p>{desc1}</p>
+    <div style="flex:1;max-height:0.6rem;"></div>
+    <p>{desc2}</p>
+    <a href={link} class="work-overlay-link">&gt;&gt; {linkText}</a>
+  </div>
+</div>

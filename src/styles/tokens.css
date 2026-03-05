@@ -1,0 +1,60 @@
+/* ============================================================
+   设计令牌 — 水墨五色 + 宣纸底色
+   墨分五色：焦、浓、重、淡、清
+   ============================================================ */
+
+@theme {
+    /* 墨色五层 (Ink gradations) */
+    --color-ink-burnt: #1a1410;
+    /* 焦墨 — 最深 */
+    --color-ink-dense: #2c2620;
+    /* 浓墨 */
+    --color-ink-heavy: #4a4035;
+    /* 重墨 */
+    --color-ink-light: #7a6f62;
+    /* 淡墨 */
+    --color-ink-faint: #b0a594;
+    /* 清墨 — 最浅 */
+
+    /* 宣纸色系 (Rice paper tones) */
+    --color-paper: #f4ede0;
+    /* 生宣 */
+    --color-paper-warm: #efe6d5;
+    /* 熟宣 */
+    --color-paper-aged: #e8dcc8;
+    /* 古纸 */
+    --color-paper-dark: #d9ccb4;
+    /* 陈纸 */
+
+    /* 朱砂印泥 (Vermilion seal) */
+    --color-vermilion: #c43b2a;
+    /* 朱砂 */
+    --color-vermilion-deep: #9e2f22;
+    /* 深朱 */
+    --color-vermilion-light: #e85d4a;
+    /* 浅朱 */
+
+    /* 点缀色 (Accent colors from traditional painting) */
+    --color-indigo: #2c4a6e;
+    /* 花青 */
+    --color-mineral-green: #4a7a5c;
+    /* 石绿 */
+    --color-ochre: #b8923a;
+    /* 赭石 */
+    --color-gold: #a08040;
+    /* 金 — 仅用于极少量点缀 */
+
+    /* 字体 */
+    --font-kai: "KaiTi", "STKaiti", "楷体", serif;
+    --font-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", serif;
+    --font-sans: "Noto Sans SC", "Source Han Sans SC", sans-serif;
+
+    /* 阴影 */
+    --shadow-ink-sm: 0 2px 12px rgba(26, 20, 16, 0.06);
+    --shadow-ink-md: 0 8px 24px rgba(26, 20, 16, 0.08);
+    --shadow-ink-lg: 0 16px 48px rgba(26, 20, 16, 0.12);
+
+    /* 缓动 */
+    --ease-ink: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-brush: cubic-bezier(0.65, 0, 0.35, 1);
+}

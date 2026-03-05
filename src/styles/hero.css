@@ -1,0 +1,324 @@
+/* ============================================================
+   Hero 首页主视觉区 —— 留白 + 墨色标题
+   ============================================================ */
+
+.hero-section {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    padding: 0 5%;
+    overflow: hidden;
+}
+
+/* 墨晕圆环装饰 */
+.hero-ink-circle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 420px;
+    height: 420px;
+    pointer-events: none;
+    opacity: 0;
+    animation: fadeUp 2s 1.5s var(--ease-ink) forwards;
+}
+
+.hero-ink-circle::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(26, 20, 16, 0.05);
+    animation: inkRingRotate 40s linear infinite;
+}
+
+.hero-ink-circle::after {
+    content: '';
+    position: absolute;
+    inset: 50px;
+    border-radius: 50%;
+    border: 1px dashed rgba(26, 20, 16, 0.03);
+    animation: inkRingRotate 55s linear infinite reverse;
+}
+
+@keyframes inkRingRotate {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* 浮动墨点 */
+.hero-particles {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.hero-particle {
+    position: absolute;
+    background: var(--color-ink-faint);
+    border-radius: 50%;
+    opacity: 0;
+    animation: particleFloat 10s ease-in-out infinite;
+}
+
+.hero-particle:nth-child(1) {
+    width: 4px;
+    height: 4px;
+    left: 15%;
+    top: 20%;
+    animation-delay: 0s;
+    animation-duration: 8s;
+}
+
+.hero-particle:nth-child(2) {
+    width: 6px;
+    height: 6px;
+    left: 75%;
+    top: 28%;
+    animation-delay: 2s;
+    animation-duration: 11s;
+}
+
+.hero-particle:nth-child(3) {
+    width: 3px;
+    height: 3px;
+    left: 35%;
+    top: 65%;
+    animation-delay: 4s;
+    animation-duration: 7s;
+}
+
+.hero-particle:nth-child(4) {
+    width: 5px;
+    height: 5px;
+    left: 85%;
+    top: 70%;
+    animation-delay: 6s;
+    animation-duration: 9s;
+}
+
+.hero-particle:nth-child(5) {
+    width: 3px;
+    height: 3px;
+    left: 20%;
+    top: 80%;
+    animation-delay: 3s;
+    animation-duration: 12s;
+}
+
+.hero-particle:nth-child(6) {
+    width: 2px;
+    height: 2px;
+    left: 55%;
+    top: 15%;
+    animation-delay: 7s;
+    animation-duration: 8s;
+}
+
+.hero-particle:nth-child(7) {
+    width: 7px;
+    height: 7px;
+    left: 65%;
+    top: 55%;
+    animation-delay: 8s;
+    animation-duration: 13s;
+}
+
+.hero-particle:nth-child(8) {
+    width: 3px;
+    height: 3px;
+    left: 10%;
+    top: 45%;
+    animation-delay: 5s;
+    animation-duration: 10s;
+}
+
+@keyframes particleFloat {
+
+    0%,
+    100% {
+        opacity: 0;
+        transform: translateY(0) scale(1);
+    }
+
+    20% {
+        opacity: 0.4;
+    }
+
+    50% {
+        opacity: 0.15;
+        transform: translateY(-50px) scale(1.5);
+    }
+
+    80% {
+        opacity: 0.3;
+    }
+}
+
+.hero-eyebrow {
+    font-size: 0.65rem;
+    letter-spacing: 0.6em;
+    color: var(--color-ink-faint);
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 1s 0.5s var(--ease-ink) forwards;
+}
+
+.hero-title {
+    font-size: clamp(3rem, 10vw, 7rem);
+    font-weight: 900;
+    letter-spacing: 0.3em;
+    text-indent: 0.3em;
+    line-height: 1.1;
+    color: var(--color-ink-burnt);
+    font-family: var(--font-kai);
+    opacity: 0;
+    animation: heroReveal 1.5s 0.8s var(--ease-ink) forwards;
+    position: relative;
+}
+
+/* 毛笔未干的笔触效果 */
+.hero-title::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg,
+            transparent,
+            var(--color-ink-heavy),
+            var(--color-ink-light),
+            transparent);
+    animation: lineGrow 1.5s 2s var(--ease-ink) forwards;
+    border-radius: 1px;
+}
+
+.hero-subtitle {
+    font-size: clamp(0.85rem, 2.5vw, 1.15rem);
+    color: var(--color-ink-light);
+    font-style: italic;
+    margin-top: 2.5rem;
+    font-family: var(--font-kai);
+    opacity: 0;
+    animation: fadeUp 1s 1.2s var(--ease-ink) forwards;
+    letter-spacing: 0.15em;
+}
+
+/* 题词标签 */
+.hero-verse {
+    margin-top: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 1s 1.8s var(--ease-ink) forwards;
+}
+
+.hero-verse span {
+    display: inline-block;
+    font-size: 0.7rem;
+    color: var(--color-ink-faint);
+    font-family: var(--font-kai);
+    letter-spacing: 0.25em;
+    border: 1px solid rgba(26, 20, 16, 0.08);
+    padding: 3px 14px;
+    border-radius: 100px;
+}
+
+.scroll-cue {
+    position: absolute;
+    bottom: 3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--color-ink-faint);
+    font-size: 0.6rem;
+    letter-spacing: 0.4em;
+    font-family: var(--font-sans);
+    opacity: 0;
+    animation: fadeUp 1s 3s var(--ease-ink) forwards;
+}
+
+.scroll-cue::before {
+    content: '';
+    display: block;
+    width: 1px;
+    height: 35px;
+    background: linear-gradient(to bottom, transparent, var(--color-ink-faint));
+    animation: scrollPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes heroReveal {
+    from {
+        opacity: 0;
+        transform: translateY(25px) scale(0.96);
+        filter: blur(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes lineGrow {
+    to {
+        width: 40%;
+    }
+}
+
+@keyframes scrollPulse {
+
+    0%,
+    100% {
+        height: 25px;
+        opacity: 0.3;
+    }
+
+    50% {
+        height: 45px;
+        opacity: 0.8;
+    }
+}
+
+/* 右侧竖排装饰文字 */
+.hero-vertical-deco {
+    position: absolute;
+    right: 4%;
+    top: 50%;
+    transform: translateY(-50%);
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    font-family: var(--font-kai);
+    font-size: 1rem;
+    letter-spacing: 0.8em;
+    color: var(--color-ink-faint);
+    opacity: 0;
+    animation: fadeUp 2s 2.5s var(--ease-ink) forwards;
+    user-select: none;
+    pointer-events: none;
+}

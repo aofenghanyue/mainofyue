@@ -1,0 +1,275 @@
+/* ============================================================
+   区块通用 + 水墨卡片
+   ============================================================ */
+
+.content-section {
+    position: relative;
+    z-index: 1;
+    padding: 6rem 5%;
+}
+
+/* 区块间毛笔横线 */
+.content-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 1.5px;
+    background: linear-gradient(90deg,
+            transparent 0%,
+            var(--color-ink-faint) 30%,
+            var(--color-ink-light) 50%,
+            var(--color-ink-faint) 70%,
+            transparent 100%);
+    border-radius: 1px;
+    opacity: 0.5;
+}
+
+.section-inner {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 3.5rem;
+}
+
+.section-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.5em;
+    color: var(--color-ink-faint);
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    display: inline-block;
+    margin-bottom: 1rem;
+    padding: 2px 12px;
+    border: 1px solid rgba(26, 20, 16, 0.06);
+    border-radius: 100px;
+}
+
+.section-title {
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    font-family: var(--font-kai);
+    color: var(--color-ink-burnt);
+    letter-spacing: 0.25em;
+    text-indent: 0.25em;
+    margin-bottom: 1rem;
+}
+
+.section-divider {
+    width: 60px;
+    height: 1px;
+    margin: 0 auto;
+    position: relative;
+    background: linear-gradient(90deg,
+            transparent,
+            var(--color-ink-light),
+            transparent);
+}
+
+/* 朱砂圆点装饰 */
+.section-divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 5px;
+    height: 5px;
+    background: var(--color-vermilion);
+    border-radius: 50%;
+    box-shadow: 0 0 6px rgba(196, 59, 42, 0.25);
+}
+
+.section-desc {
+    color: var(--color-ink-light);
+    font-size: 0.85rem;
+    margin-top: 1.2rem;
+    letter-spacing: 0.1em;
+}
+
+/* ============================================================
+   水墨卡片 — 宣纸质感
+   ============================================================ */
+.ink-card {
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(26, 20, 16, 0.06);
+    border-radius: 8px;
+    padding: 3rem;
+    position: relative;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.5s var(--ease-ink);
+    overflow: hidden;
+    box-shadow: var(--shadow-ink-sm);
+}
+
+.ink-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-ink-md);
+    border-color: rgba(26, 20, 16, 0.1);
+}
+
+/* 角饰 */
+.corner-tl,
+.corner-br {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border-color: rgba(26, 20, 16, 0.08);
+    border-style: solid;
+    transition: all 0.5s;
+    pointer-events: none;
+}
+
+.corner-tl {
+    top: 10px;
+    left: 10px;
+    border-width: 1px 0 0 1px;
+}
+
+.corner-br {
+    bottom: 10px;
+    right: 10px;
+    border-width: 0 1px 1px 0;
+}
+
+.ink-card:hover .corner-tl,
+.ink-card:hover .corner-br {
+    border-color: var(--color-vermilion);
+    opacity: 0.4;
+    width: 30px;
+    height: 30px;
+}
+
+/* ============================================================
+   关于区块
+   ============================================================ */
+.about-text {
+    text-align: center;
+    color: var(--color-ink-heavy);
+    font-size: 1.05rem;
+    line-height: 2.2;
+}
+
+.about-text strong {
+    color: var(--color-ink-burnt);
+    font-weight: 600;
+    position: relative;
+    padding-bottom: 1px;
+}
+
+.about-text strong::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: var(--color-vermilion);
+    opacity: 0.3;
+}
+
+.about-punchline {
+    font-size: 1.4rem;
+    font-family: var(--font-kai);
+    color: var(--color-ink-burnt);
+    margin-top: 1.5rem;
+}
+
+.highlight-name {
+    color: var(--color-vermilion);
+    font-size: 1.1rem;
+    border: 1px solid rgba(196, 59, 42, 0.35);
+    padding: 1px 6px;
+    border-radius: 3px;
+    display: inline-block;
+    margin-top: 4px;
+    box-shadow: 0 1px 6px rgba(196, 59, 42, 0.12);
+}
+
+/* ============================================================
+   联络区
+   ============================================================ */
+.contact-lead {
+    font-size: 1.2rem;
+    font-family: var(--font-kai);
+    color: var(--color-ink-dense);
+    text-align: center;
+    margin-bottom: 0.6rem;
+}
+
+.contact-sub {
+    text-align: center;
+    color: var(--color-ink-light);
+    font-size: 0.82rem;
+    margin-bottom: 2rem;
+}
+
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+}
+
+.ink-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--color-ink-heavy);
+    text-decoration: none;
+    font-size: 0.88rem;
+    padding: 8px 24px;
+    border: 1px solid rgba(26, 20, 16, 0.12);
+    border-radius: 4px;
+    transition: all 0.4s var(--ease-ink);
+    letter-spacing: 0.06em;
+    position: relative;
+    overflow: hidden;
+}
+
+.ink-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: var(--color-vermilion);
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s var(--ease-ink), height 0.6s var(--ease-ink), opacity 0.6s;
+    z-index: -1;
+}
+
+.ink-btn:hover {
+    color: var(--color-paper);
+    border-color: var(--color-vermilion);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(196, 59, 42, 0.15);
+}
+
+.ink-btn:hover::before {
+    width: 300px;
+    height: 300px;
+    opacity: 1;
+}
+
+/* ============================================================
+   滚动揭示
+   ============================================================ */
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s var(--ease-ink), transform 0.8s var(--ease-ink);
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}

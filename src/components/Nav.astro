@@ -1,0 +1,50 @@
+---
+// Nav.astro — 墨染导航栏
+const currentPath = Astro.url.pathname;
+---
+
+<nav class="ink-nav" id="main-nav">
+  <a href="/" class="nav-logo-link" id="nav-logo">
+    <span class="logo-text">Ofyue</span>
+    <span class="logo-seal">印</span>
+  </a>
+  <button class="nav-hamburger" id="nav-hamburger" aria-label="菜单">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links" id="nav-links-list">
+    <li><a href="/" class={currentPath === '/' ? 'active' : ''}>草堂</a></li>
+    <li><a href="/#about">平生</a></li>
+    <li><a href="/#works">所思所迹</a></li>
+    <li><a href="/#contact">飞鸽</a></li>
+    <li><a href="/list" class={currentPath.startsWith('/list') ? 'active' : ''}>文稿</a></li>
+  </ul>
+</nav>
+
+<script>
+  // Hamburger toggle
+  const burger = document.getElementById('nav-hamburger');
+  const navList = document.getElementById('nav-links-list');
+  const nav = document.getElementById('main-nav');
+
+  burger?.addEventListener('click', () => {
+    const isOpen = navList?.classList.toggle('nav-open');
+    burger.classList.toggle('is-active', !!isOpen);
+    nav?.classList.toggle('nav-menu-open', !!isOpen);
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  });
+
+  // Close overlay when a link is clicked
+  navList?.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      navList.classList.remove('nav-open');
+      burger?.classList.remove('is-active');
+      nav?.classList.remove('nav-menu-open');
+      document.body.style.overflow = '';
+    });
+  });
+
+  // Nav shrink on scroll
+  window.addEventListener('scroll', () => {
+    nav?.classList.toggle('nav-scrolled', window.scrollY > 60);
+  }, { passive: true });
+</script>
